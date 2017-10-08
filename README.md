@@ -1,6 +1,6 @@
 # IP
 
-**TODO: Add description**
+Simple IP Address representations.
 
 ## Installation
 
