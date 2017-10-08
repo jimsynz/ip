@@ -6,7 +6,7 @@ defimpl String.Chars, for: IP.Address do
   @doc ~S"""
   Convert an `address` into a string representation.
 
-  # Examples
+  ## Examples
 
       iex> "#{IP.Address.from_string!("192.0.2.1", 4)}"
       "192.0.2.1"
