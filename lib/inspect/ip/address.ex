@@ -1,14 +1,15 @@
 defimpl Inspect, for: IP.Address do
+  alias IP.Address
+  import Inspect.Algebra
+
   @moduledoc """
   Implement the `Inspect` protocol for `IP.Address`
   """
-  alias IP.Address
-  import Inspect.Algebra
 
   @doc """
   Inpect an `address`.
 
-  # Examples
+  ## Examples
 
       iex> IP.Address.from_string!("192.0.2.1", 4)
       #IP.Address<192.0.2.1>
