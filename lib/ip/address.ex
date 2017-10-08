@@ -161,6 +161,43 @@ defmodule IP.Address do
     end
   end
 
+  @doc """
+  Convert an `address` into a string.
+
+  ## Examples
+
+      iex> IP.Address.from_string!("192.0.2.1", 4)
+      ...> |> IP.Address.to_string()
+      "192.0.2.1"
+
+      iex> IP.Address.from_string!("2001:db8::1", 6)
+      ...> |> IP.Address.to_string()
+      "2001:db8::1"
+  """
+  @spec to_string(t) :: binary
+  def to_string(%Address{version: 4, address: addr}) do
+    a = addr >>> 0x18 &&& 0xff
+    b = addr >>> 0x10 &&& 0xff
+    c = addr >>> 0x08 &&& 0xff
+    d = addr &&& 0xff
+    "#{a}.#{b}.#{c}.#{d}"
+  end
+
+  def to_string(%Address{version: 6, address: addr}) do
+    a = addr >>> 0x70 &&& 0xffff
+    b = addr >>> 0x60 &&& 0xffff
+    c = addr >>> 0x50 &&& 0xffff
+    d = addr >>> 0x40 &&& 0xffff
+    e = addr >>> 0x30 &&& 0xffff
+    f = addr >>> 0x20 &&& 0xffff
+    g = addr >>> 0x10 &&& 0xffff
+    h = addr &&& 0xffff
+    [a, b, c, d, e, f, g, h]
+    |> Enum.map(&Integer.to_string(&1, 16))
+    |> Enum.join(":")
+    |> V6.compress()
+  end
+
   defp from_bytes([a, b, c, d]) do
     (a <<< 24) + (b <<< 16) + (c <<< 8) + d
   end

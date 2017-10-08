@@ -67,6 +67,7 @@ defmodule IP.Address.V6 do
       ...> |> IP.Address.V6.to_integer()
       42540766411282592856903984951653826561
   """
+  @spec to_integer(binary) :: non_neg_integer
   def to_integer(address) do
     address
     |> expand_to_ints()
