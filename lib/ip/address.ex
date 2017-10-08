@@ -1,6 +1,6 @@
 defmodule IP.Address do
   alias __MODULE__
-  alias IP.Address.{InvalidAddress, V6, Helpers}
+  alias IP.Address.{InvalidAddress, Helpers, Prefix}
   defstruct ~w(address version)a
   import Helpers
   use Bitwise
@@ -107,6 +107,56 @@ defmodule IP.Address do
   end
 
   @doc """
+  Convert a string representation into an IP address of unknown version.
+
+  Tries to parse the string as IPv6, then IPv4 before failing.  Obviously if
+  you know the version then using `from_string/2` is faster.
+
+  ## Examples
+
+      iex> "192.0.2.1"
+      ...> |> IP.Address.from_string()
+      {:ok, %IP.Address{address: 3221225985, version: 4}}
+
+      iex> "2001:db8::1"
+      ...> |> IP.Address.from_string()
+      {:ok, %IP.Address{address: 42540766411282592856903984951653826561, version: 6}}
+  """
+  @spec from_string(binary) :: {:ok, t} | {:error, term}
+  def from_string(address) when is_binary(address) do
+    case from_string(address, 6) do
+      {:ok, address} -> {:ok, address}
+      {:error, _} ->
+        case from_string(address, 4) do
+          {:ok, address} -> {:ok, address}
+          {:error, _} -> {:error, "Unable to parse IP address"}
+        end
+    end
+  end
+
+  @doc """
+  Convert a string representation into an IP address or raise an
+  `IP.Address.InvalidAddress` exception.
+
+  ## Examples
+
+      iex> "192.0.2.1"
+      ...> |> IP.Address.from_string!()
+      %IP.Address{address: 3221225985, version: 4}
+
+      iex> "2001:db8::1"
+      ...> |> IP.Address.from_string!()
+      %IP.Address{address: 42540766411282592856903984951653826561, version: 6}
+  """
+  @spec from_string!(binary) :: t
+  def from_string!(address) when is_binary(address) do
+    case from_string(address) do
+      {:ok, addr} -> addr
+      {:error, msg} -> raise(InvalidAddress, message: msg)
+    end
+  end
+
+  @doc """
   Convert a string representation into an IP address of specified version.
 
   ## Examples
@@ -121,18 +171,25 @@ defmodule IP.Address do
   """
   @spec from_string(binary, ip_version) :: {:ok, t} | {:error, term}
   def from_string(address, 4) when is_binary(address) do
-    address = address
-      |> String.split(".")
-      |> Enum.map(&String.to_integer(&1))
-      |> from_bytes()
-
-    {:ok, %Address{version: 4, address: address}}
+    case :inet.parse_ipv4_address(String.to_charlist(address)) do
+      {:ok, addr} ->
+        addr = addr
+          |> Tuple.to_list()
+          |> from_bytes()
+        {:ok, %Address{version: 4, address: addr}}
+      {:error, _} -> {:error, "Cannot parse IPv4 address"}
+    end
   end
 
   def from_string(address, 6) when is_binary(address) do
-    address = address
-      |> V6.to_integer()
-      {:ok, %Address{version: 6, address: address}}
+    case :inet.parse_ipv6strict_address(String.to_charlist(address)) do
+      {:ok, addr} ->
+        addr = addr
+          |> Tuple.to_list()
+          |> from_bytes()
+        {:ok, %Address{version: 6, address: addr}}
+      {:error, _} -> {:error, "Cannot parse IPv6 address"}
+    end
   end
 
   def from_string(_address, 4), do: {:error, "Cannot parse IPv4 address"}
@@ -140,7 +197,7 @@ defmodule IP.Address do
   def from_string(_address, version), do: {:error, "No such IP version #{inspect version}"}
 
   @doc """
-  Convert a string representation into an IP address of specified versionor raise an
+  Convert a string representation into an IP address of specified version or raise an
   `IP.Address.InvalidAddress` exception.
 
   ## Examples
@@ -180,7 +237,9 @@ defmodule IP.Address do
     b = addr >>> 0x10 &&& 0xff
     c = addr >>> 0x08 &&& 0xff
     d = addr &&& 0xff
-    "#{a}.#{b}.#{c}.#{d}"
+    {a, b, c, d}
+    |> :inet.ntoa()
+    |> List.to_string()
   end
 
   def to_string(%Address{version: 6, address: addr}) do
@@ -192,13 +251,29 @@ defmodule IP.Address do
     f = addr >>> 0x20 &&& 0xffff
     g = addr >>> 0x10 &&& 0xffff
     h = addr &&& 0xffff
-    [a, b, c, d, e, f, g, h]
-    |> Enum.map(&Integer.to_string(&1, 16))
-    |> Enum.join(":")
-    |> V6.compress()
+    {a, b, c, d, e, f, g, h}
+    |> :inet.ntoa()
+    |> List.to_string()
   end
+
+  @doc """
+  Convert an `address` to an `IP.Prefix`.
+
+  ## Examples
+
+      iex> IP.Address.from_string!("192.0.2.1", 4)
+      ...> |> IP.Address.to_prefix(32)
+      #IP.Prefix<192.0.2.1/32>
+  """
+  @spec to_prefix(t, Prefix.ipv4_prefix_length | Prefix.ipv6_prefix_length) :: Prefix.t
+  def to_prefix(%Address{} = address, length), do: IP.Prefix.new(address, length)
 
   defp from_bytes([a, b, c, d]) do
     (a <<< 24) + (b <<< 16) + (c <<< 8) + d
+  end
+
+  defp from_bytes([a, b, c, d, e, f, g, h]) do
+    (a <<< 0x70) + (b <<< 0x60) + (c <<< 0x50) + (d <<< 0x40) +
+    (e <<< 0x30) + (f <<< 0x20) + (g <<< 0x10) + h
   end
 end
