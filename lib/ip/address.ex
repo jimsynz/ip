@@ -267,7 +267,7 @@ defmodule IP.Address do
   """
   @spec to_prefix(t, Prefix.ipv4_prefix_length | Prefix.ipv6_prefix_length) \
     :: Prefix.t
-  def to_prefix(%Address{} = address, length), do: IP.Prefix.new(address, length)
+  def to_prefix(%Address{} = address, length), do: Prefix.new(address, length)
 
   @doc """
   Returns the IP version of the address.
@@ -516,7 +516,8 @@ defmodule IP.Address do
       iex> IP.Address.generate_ula("60:f8:1d:ad:d8:90")
       #IP.Address<fd29:f1ef:86a1::>
   """
-  @spec generate_ula(binary, non_neg_integer, true | false) :: {:ok, t} | {:error, term}
+  @spec generate_ula(binary, non_neg_integer, true | false) :: \
+    {:ok, t} | {:error, term}
   def generate_ula(mac, subnet_id \\ 0, locally_assigned \\ true) do
     with {:ok, address} <- ULA.generate(mac, subnet_id, locally_assigned),
          {:ok, address} <- from_integer(address, 6)
