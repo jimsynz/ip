@@ -1,6 +1,6 @@
 defmodule IP.Address do
-  alias __MODULE__
-  alias IP.Address.{InvalidAddress, Helpers, Prefix}
+  alias IP.{Address, Prefix}
+  alias IP.Address.{InvalidAddress, Helpers, ULA}
   defstruct ~w(address version)a
   import Helpers
   use Bitwise
@@ -342,6 +342,188 @@ defmodule IP.Address do
   @spec v4?(t) :: true | false
   def v4?(%Address{version: 4} = _address), do: true
   def v4?(_address), do: false
+
+  @doc """
+  Returns true if the address is an EUI-64 address.
+
+  ## Examples
+
+      iex> "2001:db8::62f8:1dff:fead:d890"
+      ...> |> IP.Address.from_string!()
+      ...> |> IP.Address.eui_64?()
+      true
+  """
+  @spec eui_64?(t) :: true | false
+  def eui_64?(%Address{address: address, version: 6})
+  when (address &&& 0x20000fffe000000) == 0x20000fffe000000,
+  do: true
+
+  def eui_64?(_address), do: false
+
+  @doc """
+  Return a MAC address coded in an EUI-64 address.
+
+  ## Examples
+
+      iex> "2001:db8::62f8:1dff:fead:d890"
+      ...> |> IP.Address.from_string!()
+      ...> |> IP.Address.eui_64_mac()
+      {:ok, "60f8.1dad.d890"}
+  """
+  @spec eui_64_mac(t) :: binary
+  def eui_64_mac(%Address{address: address, version: 6})
+  when (address &&& 0x20000fffe000000) == 0x20000fffe000000
+  do
+    mac  = address &&& 0xffffffffffffffff
+    head = mac >>> 40
+    tail = mac &&& 0xffffff
+    mac  = ((head <<< 24) + tail) ^^^ 0x20000000000
+    <<a::binary-size(4), b::binary-size(4), c::binary-size(4)>> = mac
+      |> Integer.to_string(16)
+      |> String.downcase()
+      |> String.pad_leading(12, "0")
+    {:ok, "#{a}.#{b}.#{c}"}
+  end
+
+  def eui_64_mac(_address), do: {:error, "Not an EUI-64 address"}
+
+  @doc """
+  Convert an IPv4 address into a 6to4 address.
+
+  ## Examples
+
+      iex> "192.0.2.1"
+      ...> |> IP.Address.from_string!()
+      ...> |> IP.Address.to_6to4()
+      #IP.Address<2002:c000:201::>
+  """
+  @spec to_6to4(t) :: {:ok, t} | {:error, term}
+  def to_6to4(%Address{address: address, version: 4}) do
+    address = (0x2002 <<< 112) + (address <<< 80)
+    %Address{address: address, version: 6}
+  end
+
+  def to_6to4(_address), do: {:error, "Not an IPv4 address"}
+
+  @doc """
+  Determine if the IP address is a 6to4 address.
+
+  ## Examples
+
+      iex> "2002:c000:201::"
+      ...> |> IP.Address.from_string!()
+      ...> |> IP.Address.is_6to4?()
+      true
+
+      iex> "2001:db8::"
+      ...> |> IP.Address.from_string!()
+      ...> |> IP.Address.is_6to4?()
+      false
+  """
+  @spec is_6to4?(t) :: true | false
+  def is_6to4?(%Address{address: address, version: 6})
+  when (address >>> 112) == 0x2002, do: true
+
+  def is_6to4?(_address), do: false
+
+  @doc """
+  Convert a 6to4 IPv6 address to it's correlated IPv6 address.
+
+  ## Examples
+
+      iex> "2002:c000:201::"
+      ...> |> IP.Address.from_string!()
+      ...> |> IP.Address.from_6to4()
+      ...> |> inspect()
+      "{:ok, #IP.Address<192.0.2.1>}"
+
+      iex> "2001:db8::"
+      ...> |> IP.Address.from_string!()
+      ...> |> IP.Address.from_6to4()
+      {:error, "Not a 6to4 address"}
+  """
+  @spec from_6to4(t) :: {:ok, t} | {:error, term}
+  def from_6to4(%Address{address: address, version: 6})
+  when (address >>> 112) == 0x2002
+  do
+    address = (address >>> 80) &&& 0xffffffff
+    Address.from_integer(address, 4)
+  end
+
+  def from_6to4(_address), do: {:error, "Not a 6to4 address"}
+
+  @doc """
+  Determine if an IP address is a teredo connection.
+
+  ## Examples
+
+      iex> "2001::"
+      ...> |> IP.Address.from_string!()
+      ...> |> IP.Address.is_teredo?()
+      true
+  """
+  @spec is_teredo?(t) :: true | false
+  def is_teredo?(%Address{address: address, version: 6})
+  when (address >>> 96) == 0x20010000, do: true
+
+  def is_teredo?(_address), do: false
+
+  @doc """
+  Return information about a teredo connection.
+
+  ## Examples
+
+      iex> "2001:0:4136:e378:8000:63bf:3fff:fdd2"
+      ...> |> IP.Address.from_string!()
+      ...> |> IP.Address.teredo()
+      ...> |> Map.get(:server)
+      #IP.Address<65.54.227.120>
+
+      iex> "2001:0:4136:e378:8000:63bf:3fff:fdd2"
+      ...> |> IP.Address.from_string!()
+      ...> |> IP.Address.teredo()
+      ...> |> Map.get(:client)
+      #IP.Address<63.255.253.210>
+
+      iex> "2001:0:4136:e378:8000:63bf:3fff:fdd2"
+      ...> |> IP.Address.from_string!()
+      ...> |> IP.Address.teredo()
+      ...> |> Map.get(:port)
+      25535
+  """
+  @spec teredo(t) :: {:ok, map} | {:error, term}
+  def teredo(%Address{address: address, version: 6})
+  when (address >>> 96) == 0x20010000 do
+    server = address >>> 64 &&& ((1 <<< 32) - 1)
+    client = address &&& ((1 <<< 32) - 1) &&& ((1 <<< 32) - 1)
+    port   = (address >>> 32) &&& ((1 <<< 16) - 1)
+    %{server: Address.from_integer!(server, 4),
+      client: Address.from_integer!(client, 4),
+      port:   port}
+  end
+
+  def teredo(_address), do: {:error, "Not a teredo address"}
+
+  @doc """
+  Generate an IPv6 Unique Local Address
+
+  Note that the MAC address is just used as a source of randomness, so where you
+  get it from is not important and doesn't restrict this ULA to just that system.
+  See RFC4193
+
+  ## Examples
+
+      iex> IP.Address.generate_ula("60:f8:1d:ad:d8:90")
+      #IP.Address<fd29:f1ef:86a1::>
+  """
+  @spec generate_ula(binary, non_neg_integer, true | false) :: {:ok, t} | {:error, term}
+  def generate_ula(mac, subnet_id \\ 0, locally_assigned \\ true) do
+    with {:ok, address} <- ULA.generate(mac, subnet_id, locally_assigned),
+         {:ok, address} <- from_integer(address, 6)
+    do
+      {:ok, address}
+    end
+  end
 
   defp from_bytes([a, b, c, d]) do
     (a <<< 24) + (b <<< 16) + (c <<< 8) + d

@@ -1,6 +1,6 @@
 defmodule IP.Prefix do
   alias IP.{Prefix, Address}
-  alias IP.Prefix.{Parser, InvalidPrefix, Helpers}
+  alias IP.Prefix.{Parser, InvalidPrefix, Helpers, EUI64}
   defstruct ~w(address mask)a
   use Bitwise
   import Helpers
@@ -30,12 +30,12 @@ defmodule IP.Prefix do
   @spec new(Address.t, ipv4_prefix_length | ipv6_prefix_length) :: t
   def new(%Address{address: address, version: 4}, length) when length > 0 and length <= 32 do
     mask = calculate_mask_from_length(length, 32)
-    %Prefix{address: Address.from_integer!(address &&& mask, 4), mask: mask}
+    %Prefix{address: Address.from_integer!(address, 4), mask: mask}
   end
 
   def new(%Address{address: address, version: 6}, length) when length > 0 and length <= 128 do
     mask = calculate_mask_from_length(length, 128)
-    %Prefix{address: Address.from_integer!(address &&& mask, 6), mask: mask}
+    %Prefix{address: Address.from_integer!(address, 6), mask: mask}
   end
 
   @doc """
@@ -145,6 +145,29 @@ defmodule IP.Prefix do
   """
   @spec length(t) :: ipv4_prefix_length | ipv6_prefix_length
   def length(%Prefix{mask: mask}), do: calculate_length_from_mask(mask)
+
+  @doc """
+  Alter the bit-`length` of the `prefix`.
+
+  ## Example
+
+      iex> "192.0.2.0/24"
+      ...> |> IP.Prefix.from_string!()
+      ...> |> IP.Prefix.length(25)
+      #IP.Prefix<192.0.2.0/25>
+  """
+  @spec length(t, ipv4_prefix_length | ipv6_prefix_length) :: t
+  def length(%Prefix{address: %Address{version: 4}} = prefix, length)
+  when is_number(length) and length >= 0 and length <= 32
+  do
+    %{prefix | mask: calculate_mask_from_length(length, 32)}
+  end
+
+  def length(%Prefix{address: %Address{version: 6}} = prefix, length)
+  when is_number(length) and length >= 0 and length <= 128
+  do
+    %{prefix | mask: calculate_mask_from_length(length, 128)}
+  end
 
   @doc """
   Returns the calculated mask of the prefix.
@@ -271,5 +294,104 @@ defmodule IP.Prefix do
   end
 
   def contains?(_prefix, _address), do: false
+
+  @doc """
+  Generate an EUI-64 host address within the specifed IPv6 `prefix`.
+
+  EUI-64 addresses can only be generated for 64 bit long IPv6 prefixes.
+
+  ## Examples
+
+      iex> "2001:db8::/64"
+      ...> |> IP.Prefix.from_string!
+      ...> |> IP.Prefix.eui_64("60:f8:1d:ad:d8:90")
+      ...> |> inspect()
+      "{:ok, #IP.Address<2001:db8::62f8:1dff:fead:d890>}"
+  """
+  @spec eui_64(t, binary) :: Address.t
+  def eui_64(%Prefix{address: %Address{version: 6},
+                     mask: 0xffffffffffffffff0000000000000000} = prefix, mac)
+  do
+    with {:ok, eui_portion} <- EUI64.eui_portion(mac),
+         address            <- Prefix.first(prefix),
+         address            <- Address.to_integer(address),
+         address            <- address + eui_portion,
+         {:ok, address}     <- Address.from_integer(address, 6)
+    do
+      {:ok, address}
+    end
+  end
+
+  @doc """
+  Generate an EUI-64 host address within the specifed IPv6 `prefix`.
+
+  EUI-64 addresses can only be generated for 64 bit long IPv6 prefixes.
+
+  ## Examples
+
+      iex> "2001:db8::/64"
+      ...> |> IP.Prefix.from_string!
+      ...> |> IP.Prefix.eui_64!("60:f8:1d:ad:d8:90")
+      #IP.Address<2001:db8::62f8:1dff:fead:d890>
+  """
+  @spec eui_64!(t, binary) :: Address.t
+  def eui_64!(prefix, mac) do
+    case eui_64(prefix, mac) do
+      {:ok, address} -> address
+      {:error, msg} -> raise(InvalidPrefix, msg)
+    end
+  end
+
+  @doc """
+  Return the address space within this address.
+
+  ## Examples
+
+      iex> "192.0.2.0/24"
+      ...> |> IP.Prefix.from_string!()
+      ...> |> IP.Prefix.space()
+      256
+
+      iex> "2001:db8::/64"
+      ...> |> IP.Prefix.from_string!()
+      ...> |> IP.Prefix.space()
+      18446744073709551616
+  """
+  @spec space(t) :: non_neg_integer
+  def space(%Prefix{} = prefix) do
+    first = prefix
+      |> Prefix.first()
+      |> Address.to_integer()
+    last  = prefix
+      |> Prefix.last()
+      |> Address.to_integer()
+    last - first + 1
+  end
+
+  @doc """
+  Return the usable IP address space within this address.
+
+  ## Examples
+
+      iex> "192.0.2.0/24"
+      ...> |> IP.Prefix.from_string!()
+      ...> |> IP.Prefix.usable()
+      254
+
+      iex> "2001:db8::/64"
+      ...> |> IP.Prefix.from_string!()
+      ...> |> IP.Prefix.usable()
+      18446744073709551616
+  """
+  @spec usable(t) :: non_neg_integer
+  def usable(%Prefix{address: %Address{version: 4}} = prefix) do
+    space = prefix
+      |> IP.Prefix.space()
+    space - 2
+  end
+
+  def usable(%Prefix{address: %Address{version: 6}} = prefix) do
+    IP.Prefix.space(prefix)
+  end
 
 end
