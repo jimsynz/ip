@@ -14,8 +14,9 @@ defimpl String.Chars, for: IP.Prefix do
       ...> "#{prefix}"
       "192.0.2.1/32"
   """
-  def to_string(%Prefix{address: address} = prefix) do
-    length = Prefix.length(prefix)
+  def to_string(%Prefix{} = prefix) do
+    length  = Prefix.length(prefix)
+    address = Prefix.first(prefix)
     "#{address}/#{length}"
   end
 end
