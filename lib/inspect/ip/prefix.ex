@@ -16,7 +16,7 @@ defimpl Inspect, for: IP.Prefix do
       #IP.Prefix<192.0.2.1/32>
   """
   @spec inspect(Prefix.t, list) :: binary
-  def inspect(%Prefix{address: address, length: length}, _opts) do
-    concat ["#IP.Prefix<#{address}/#{length}>"]
+  def inspect(%Prefix{} = prefix, _opts) do
+    concat ["#IP.Prefix<#{prefix}>"]
   end
 end
