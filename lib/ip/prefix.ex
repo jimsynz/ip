@@ -1,7 +1,9 @@
 defmodule IP.Prefix do
   alias IP.{Prefix, Address}
+  alias IP.Prefix.{Parser, InvalidPrefix, Helpers}
   defstruct ~w(address mask)a
   use Bitwise
+  import Helpers
 
   @moduledoc """
   Defines an IP prefix, otherwise known as a subnet.
@@ -37,12 +39,107 @@ defmodule IP.Prefix do
   end
 
   @doc """
+  Create a prefix by attempting to parse a string of unknown version.
+
+  Calling `from_string/2` is faster if you know the IP version of the prefix.
+
+  ## Examples
+
+      iex> "192.0.2.1/24"
+      ...> |> IP.Prefix.from_string()
+      ...> |> inspect()
+      "{:ok, #IP.Prefix<192.0.2.0/24>}"
+
+      iex> "192.0.2.1/255.255.255.0"
+      ...> |> IP.Prefix.from_string()
+      ...> |> inspect()
+      "{:ok, #IP.Prefix<192.0.2.0/24>}"
+
+      iex> "2001:db8::/64"
+      ...> |> IP.Prefix.from_string()
+      ...> |> inspect()
+      "{:ok, #IP.Prefix<2001:db8::/64>}"
+  """
+  @spec from_string(binary) :: {:ok, t} | {:error, term}
+  def from_string(prefix), do: Parser.parse(prefix)
+
+  @doc """
+  Create a prefix by attempting to parse a string of specified IP version.
+
+  ## Examples
+
+      iex> "192.0.2.1/24"
+      ...> |> IP.Prefix.from_string(4)
+      ...> |> inspect()
+      "{:ok, #IP.Prefix<192.0.2.0/24>}"
+
+      iex> "192.0.2.1/255.255.255.0"
+      ...> |> IP.Prefix.from_string(4)
+      ...> |> inspect()
+      "{:ok, #IP.Prefix<192.0.2.0/24>}"
+
+      iex> "2001:db8::/64"
+      ...> |> IP.Prefix.from_string(4)
+      {:error, "Error parsing IPv4 prefix"}
+  """
+  @spec from_string(binary, 4 | 6) :: {:ok, t} | {:error, term}
+  def from_string(prefix, version), do: Parser.parse(prefix, version)
+
+  @doc """
+  Create a prefix by attempting to parse a string of unknown version.
+
+  Calling `from_string!/2` is faster if you know the IP version of the prefix.
+
+  ## Examples
+
+      iex> "192.0.2.1/24"
+      ...> |> IP.Prefix.from_string!()
+      #IP.Prefix<192.0.2.0/24>
+
+      iex> "192.0.2.1/255.255.255.0"
+      ...> |> IP.Prefix.from_string!()
+      #IP.Prefix<192.0.2.0/24>
+
+      iex> "2001:db8::/64"
+      ...> |> IP.Prefix.from_string!()
+      #IP.Prefix<2001:db8::/64>
+  """
+  @spec from_string!(binary) :: t
+  def from_string!(prefix) do
+    case from_string(prefix) do
+      {:ok, prefix} -> prefix
+      {:error, msg} -> raise(InvalidPrefix, message: msg)
+    end
+  end
+
+  @doc """
+  Create a prefix by attempting to parse a string of specified IP version.
+
+  ## Examples
+
+      iex> "192.0.2.1/24"
+      ...> |> IP.Prefix.from_string!(4)
+      #IP.Prefix<192.0.2.0/24>
+
+      iex> "192.0.2.1/255.255.255.0"
+      ...> |> IP.Prefix.from_string!(4)
+      #IP.Prefix<192.0.2.0/24>
+  """
+  @spec from_string!(binary, 4 | 6) :: t
+  def from_string!(prefix, version) do
+    case from_string(prefix, version) do
+      {:ok, prefix} -> prefix
+      {:error, msg} -> raise(InvalidPrefix, message: msg)
+    end
+  end
+
+  @doc """
   Returns the bit-length of the prefix.
 
   ## Example
 
-      iex> IP.Address.from_string!("192.0.2.1")
-      ...> |> IP.Address.to_prefix(24)
+      iex> "192.0.2.1/24"
+      ...> |> IP.Prefix.from_string!()
       ...> |> IP.Prefix.length()
       24
   """
@@ -54,8 +151,7 @@ defmodule IP.Prefix do
 
   ## Example
 
-      iex> IP.Address.from_string!("192.0.2.1")
-      ...> |> IP.Address.to_prefix(24)
+      iex> IP.Prefix.from_string!("192.0.2.1/24")
       ...> |> IP.Prefix.mask()
       0b11111111111111111111111100000000
   """
@@ -63,17 +159,49 @@ defmodule IP.Prefix do
   def mask(%Prefix{mask: mask}), do: mask
 
   @doc """
+  Returns an old-fashioned subnet mask for IPv4 prefixes.
+
+  ## Example
+
+      iex> IP.Prefix.from_string!("192.0.2.0/24")
+      ...> |> IP.Prefix.subnet_mask()
+      "255.255.255.0"
+  """
+  @spec subnet_mask(t) :: binary
+  def subnet_mask(%Prefix{mask: mask, address: %Address{version: 4}}) do
+    mask
+    |> Address.from_integer!(4)
+    |> Address.to_string()
+  end
+
+  @doc """
+  Returns an "cisco style" wildcard mask for IPv4 prefixes.
+
+  ## Example
+
+      iex> IP.Prefix.from_string!("192.0.2.0/24")
+      ...> |> IP.Prefix.wildcard_mask()
+      "0.0.0.255"
+  """
+  @spec wildcard_mask(t) :: binary
+  def wildcard_mask(%Prefix{mask: mask, address: %Address{version: 4}}) do
+    mask
+    |> bnot()
+    |> band(@ipv4_mask)
+    |> Address.from_integer!(4)
+    |> Address.to_string()
+  end
+
+  @doc """
   Returns the first address in the prefix.
 
   ## Examples
 
-      iex> IP.Address.from_string!("192.0.2.128")
-      ...> |> IP.Address.to_prefix(24)
+      iex> IP.Prefix.from_string!("192.0.2.128/24")
       ...> |> IP.Prefix.first()
       #IP.Address<192.0.2.0>
 
-      iex> IP.Address.from_string!("2001:db8::128")
-      ...> |> IP.Address.to_prefix(64)
+      iex> IP.Prefix.from_string!("2001:db8::128/64")
       ...> |> IP.Prefix.first()
       #IP.Address<2001:db8::>
   """
@@ -87,13 +215,11 @@ defmodule IP.Prefix do
 
   ## Examples
 
-      iex> IP.Address.from_string!("192.0.2.128")
-      ...> |> IP.Address.to_prefix(24)
+      iex> IP.Prefix.from_string!("192.0.2.128/24")
       ...> |> IP.Prefix.last()
       #IP.Address<192.0.2.255>
 
-      iex> IP.Address.from_string!("2001:db8::128")
-      ...> |> IP.Address.to_prefix(64)
+      iex> IP.Prefix.from_string!("2001:db8::128/64")
       ...> |> IP.Prefix.last()
       #IP.Address<2001:db8::ffff:ffff:ffff:ffff>
   """
@@ -106,15 +232,38 @@ defmodule IP.Prefix do
     Address.from_integer!(address, 6)
   end
 
-  def contains?(%Prefix{address: %Address{address: addr0, version: 4}, mask: mask}, %Address{address: addr1, version: 4})
+  @doc """
+  Returns `true` or `false` depending on whether the supplied `address` is
+  contained within `prefix`.
+
+  ## Examples
+
+      iex> IP.Prefix.from_string!("192.0.2.0/24")
+      ...> |> IP.Prefix.contains?(IP.Address.from_string!("192.0.2.127"))
+      true
+
+      iex> IP.Prefix.from_string!("192.0.2.0/24")
+      ...> |> IP.Prefix.contains?(IP.Address.from_string!("198.51.100.1"))
+      false
+
+      iex> IP.Prefix.from_string!("2001:db8::/64")
+      ...> |> IP.Prefix.contains?(IP.Address.from_string!("2001:db8::1"))
+      true
+
+      iex> IP.Prefix.from_string!("2001:db8::/64")
+      ...> |> IP.Prefix.contains?(IP.Address.from_string!("2001:db8:1::1"))
+      false
+  """
+  def contains?(%Prefix{address: %Address{address: addr0, version: 4}, mask: mask} = _prefix,
+                %Address{address: addr1, version: 4} = _address)
   when (addr0 &&& mask) <= addr1
    and ((addr0 &&& mask) + (~~~(mask) &&& @ipv4_mask)) >= addr1
   do
     true
   end
 
-  def contains?(%Prefix{address: %Address{address: addr0, version: 6}, mask: mask},
-                %Address{address: addr1, version: 6})
+  def contains?(%Prefix{address: %Address{address: addr0, version: 6}, mask: mask} = _prefix,
+                %Address{address: addr1, version: 6} = _address)
   when (addr0 &&& mask) <= addr1
    and ((addr0 &&& mask) + (~~~(mask) &&& @ipv6_mask)) >= addr1
   do
@@ -123,19 +272,4 @@ defmodule IP.Prefix do
 
   def contains?(_prefix, _address), do: false
 
-  defp calculate_mask_from_length(length, mask_length) do
-    pad = mask_length - length
-    0..(length - 1)
-    |> Enum.reduce(0, fn (i, mask) -> mask + (1 <<< i + pad) end)
-  end
-
-  defp calculate_length_from_mask(mask) do
-    mask
-    |> Integer.digits(2)
-    |> Stream.filter(fn
-      1 -> true
-      0 -> false
-    end)
-    |> Enum.count()
-  end
 end

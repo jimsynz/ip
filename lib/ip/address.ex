@@ -171,7 +171,7 @@ defmodule IP.Address do
   """
   @spec from_string(binary, ip_version) :: {:ok, t} | {:error, term}
   def from_string(address, 4) when is_binary(address) do
-    case :inet.parse_ipv4_address(String.to_charlist(address)) do
+    case :inet.parse_ipv4strict_address(String.to_charlist(address)) do
       {:ok, addr} ->
         addr = addr
           |> Tuple.to_list()
@@ -268,6 +268,80 @@ defmodule IP.Address do
   @spec to_prefix(t, Prefix.ipv4_prefix_length | Prefix.ipv6_prefix_length) \
     :: Prefix.t
   def to_prefix(%Address{} = address, length), do: IP.Prefix.new(address, length)
+
+  @doc """
+  Returns the IP version of the address.
+
+  ## Examples
+
+      iex> "192.0.2.1"
+      ...> |> IP.Address.from_string!
+      ...> |> IP.Address.version()
+      4
+
+      iex> "2001:db8::1"
+      ...> |> IP.Address.from_string!
+      ...> |> IP.Address.version()
+      6
+  """
+  @spec version(t) :: 4 | 6
+  def version(%Address{version: version}), do: version
+
+  @doc """
+  Returns the IP Address as an integer
+
+  ## Examples
+
+      iex> "192.0.2.1"
+      ...> |> IP.Address.from_string!
+      ...> |> IP.Address.to_integer()
+      3221225985
+
+      iex> "2001:db8::1"
+      ...> |> IP.Address.from_string!
+      ...> |> IP.Address.to_integer()
+      42540766411282592856903984951653826561
+  """
+  @spec to_integer(t) :: ipv4 | ipv6
+  def to_integer(%Address{address: address}), do: address
+
+  @doc """
+  Returns true if `address` is version 6.
+
+  ## Examples
+
+      iex> "192.0.2.1"
+      ...> |> IP.Address.from_string!()
+      ...> |> IP.Address.v6?
+      false
+
+      iex> "2001:db8::"
+      ...> |> IP.Address.from_string!()
+      ...> |> IP.Address.v6?
+      true
+  """
+  @spec v6?(t) :: true | false
+  def v6?(%Address{version: 6} = _address), do: true
+  def v6?(_address), do: false
+
+  @doc """
+  Returns true if `address` is version 4.
+
+  ## Examples
+
+      iex> "192.0.2.1"
+      ...> |> IP.Address.from_string!()
+      ...> |> IP.Address.v4?
+      true
+
+      iex> "2001:db8::"
+      ...> |> IP.Address.from_string!()
+      ...> |> IP.Address.v4?
+      false
+  """
+  @spec v4?(t) :: true | false
+  def v4?(%Address{version: 4} = _address), do: true
+  def v4?(_address), do: false
 
   defp from_bytes([a, b, c, d]) do
     (a <<< 24) + (b <<< 16) + (c <<< 8) + d
