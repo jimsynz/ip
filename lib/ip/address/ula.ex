@@ -10,7 +10,8 @@ defmodule IP.Address.ULA do
   @doc """
   Generates an IPv6 Unique Local Address
   """
-  @spec generate(binary, non_neg_integer, true | false) :: {:ok, Address.ipv4} | {:error, term}
+  @spec generate(binary, non_neg_integer, true | false) :: \
+    {:ok, Address.ipv4} | {:error, term}
   def generate(mac, subnet_id, locally_assigned)
   when is_binary(mac)
    and is_integer(subnet_id) and subnet_id >= 0 and subnet_id <= 0xffff
@@ -21,7 +22,9 @@ defmodule IP.Address.ULA do
          {:ok, eui}        <- EUI64.eui_portion(mac),
          {:ok, digest}     <- generate_digest(ntp_time, eui),
          {:ok, global_id}  <- last_40_bits_of_digest(digest),
-         {:ok, prefix}     <- generate_address(locally_assigned, subnet_id, global_id)
+         {:ok, prefix}     <- generate_address(locally_assigned,
+                                               subnet_id,
+                                               global_id)
     do
       {:ok, prefix}
     end
@@ -34,7 +37,8 @@ defmodule IP.Address.ULA do
   end
 
   defp generate_digest(ntp_time, eui) do
-    with key    <- << ntp_time::unsigned-integer-size(64), eui::unsigned-integer-size(64) >>,
+    with key    <- << ntp_time::unsigned-integer-size(64),
+                      eui::unsigned-integer-size(64) >>,
          digest <- :crypto.hash(:sha, key),
          digest <- :binary.decode_unsigned(digest)
     do

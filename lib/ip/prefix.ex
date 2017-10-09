@@ -386,12 +386,12 @@ defmodule IP.Prefix do
   @spec usable(t) :: non_neg_integer
   def usable(%Prefix{address: %Address{version: 4}} = prefix) do
     space = prefix
-      |> IP.Prefix.space()
+      |> Prefix.space()
     space - 2
   end
 
   def usable(%Prefix{address: %Address{version: 6}} = prefix) do
-    IP.Prefix.space(prefix)
+    Prefix.space(prefix)
   end
 
 end
