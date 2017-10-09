@@ -1,6 +1,6 @@
 # IP
 
-Simple IP Address representations.
+IP, IP, Ooray! Simple IP Address representations.
 
 ## Installation
 
