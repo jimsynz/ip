@@ -28,12 +28,12 @@ defmodule IP.Prefix do
       #IP.Prefix<2001:db8::/64>
   """
   @spec new(Address.t, ipv4_prefix_length | ipv6_prefix_length) :: t
-  def new(%Address{address: address, version: 4}, length) when length > 0 and length <= 32 do
+  def new(%Address{address: address, version: 4}, length) when length >= 0 and length <= 32 do
     mask = calculate_mask_from_length(length, 32)
     %Prefix{address: Address.from_integer!(address, 4), mask: mask}
   end
 
-  def new(%Address{address: address, version: 6}, length) when length > 0 and length <= 128 do
+  def new(%Address{address: address, version: 6}, length) when length >= 0 and length <= 128 do
     mask = calculate_mask_from_length(length, 128)
     %Prefix{address: Address.from_integer!(address, 6), mask: mask}
   end
@@ -188,13 +188,12 @@ defmodule IP.Prefix do
 
       iex> IP.Prefix.from_string!("192.0.2.0/24")
       ...> |> IP.Prefix.subnet_mask()
-      "255.255.255.0"
+      #IP.Address<255.255.255.0>
   """
   @spec subnet_mask(t) :: binary
   def subnet_mask(%Prefix{mask: mask, address: %Address{version: 4}}) do
     mask
     |> Address.from_integer!(4)
-    |> Address.to_string()
   end
 
   @doc """
@@ -204,7 +203,7 @@ defmodule IP.Prefix do
 
       iex> IP.Prefix.from_string!("192.0.2.0/24")
       ...> |> IP.Prefix.wildcard_mask()
-      "0.0.0.255"
+      #IP.Address<0.0.0.255>
   """
   @spec wildcard_mask(t) :: binary
   def wildcard_mask(%Prefix{mask: mask, address: %Address{version: 4}}) do
@@ -212,7 +211,6 @@ defmodule IP.Prefix do
     |> bnot()
     |> band(@ipv4_mask)
     |> Address.from_integer!(4)
-    |> Address.to_string()
   end
 
   @doc """
@@ -358,13 +356,15 @@ defmodule IP.Prefix do
       18446744073709551616
   """
   @spec space(t) :: non_neg_integer
-  def space(%Prefix{} = prefix) do
-    first = prefix
-      |> Prefix.first()
-      |> Address.to_integer()
-    last  = prefix
-      |> Prefix.last()
-      |> Address.to_integer()
+  def space(%Prefix{address: %Address{address: address, version: 4}, mask: mask}) do
+    first = address &&& mask
+    last  = first + (~~~mask &&& @ipv4_mask)
+    last - first + 1
+  end
+
+  def space(%Prefix{address: %Address{address: address, version: 6}, mask: mask}) do
+    first = address &&& mask
+    last  = first + (~~~mask &&& @ipv6_mask)
     last - first + 1
   end
 

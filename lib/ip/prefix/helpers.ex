@@ -5,9 +5,9 @@ defmodule IP.Prefix.Helpers do
 
   @doc false
   def calculate_mask_from_length(length, mask_length) do
-    pad = mask_length - length
-    0..(length - 1)
-    |> Enum.reduce(0, fn (i, mask) -> mask + (1 <<< i + pad) end)
+    pad  = mask_length - length - 1
+    mask = n_times_reduce(length, 0, fn (i, mask) -> mask + (1 <<< i) end)
+    mask <<< pad
   end
 
   @doc false
@@ -19,5 +19,11 @@ defmodule IP.Prefix.Helpers do
       0 -> false
     end)
     |> Enum.count()
+  end
+
+  defp n_times_reduce(0, acc, _fun), do: acc
+  defp n_times_reduce(n, acc, fun) do
+    acc = fun.(n, acc)
+    n_times_reduce(n - 1, acc, fun)
   end
 end
