@@ -85,8 +85,8 @@ defmodule IP.Prefix.Parser do
     case Address.from_string(mask, 4) do
       {:ok, address} ->
         mask = address
-          |> Address.to_integer()
-          |> calculate_length_from_mask()
+        |> Address.to_integer()
+        |> calculate_length_from_mask()
         {:ok, mask}
       _ ->
         {:ok, String.to_integer(mask)}
