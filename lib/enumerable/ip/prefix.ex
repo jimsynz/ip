@@ -47,7 +47,8 @@ defimpl Enumerable, for: IP.Prefix do
       ...> |> Enum.map(fn a -> IP.Address.to_string(a) end)
       ["192.0.2.130", "192.0.2.132", "192.0.2.134"]
   """
-  @spec reduce(Prefix.t, Enumerable.acc, Enumerable.reducer) :: Enumerable.result
+  @spec reduce(Prefix.t, Enumerable.acc, Enumerable.reducer) :: \
+    Enumerable.result
   def reduce(_,                   {:halt, acc},    _fun), do: {:halted, acc}
   def reduce({prefix, pos, last}, {:suspend, acc}, fun),  do: {:suspended, acc, &reduce({prefix, pos, last}, &1, fun)}
 
