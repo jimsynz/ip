@@ -60,20 +60,24 @@ defmodule IP.Scope do
   @spec address_scope(Address.t) :: binary
 
   Enum.each(@v4_scopes, fn {prefix, description} ->
-    %Prefix{address: %Address{address: addr0}, mask: mask} = Prefix.from_string!(prefix)
+    %Prefix{address: %Address{address: addr0}, mask: mask} = prefix
+      |> Prefix.from_string!()
     def address_scope(%Address{address: addr1})
     when (unquote(addr0) &&& unquote(mask)) <= addr1
-    and (unquote(addr0) &&& unquote(mask)) + (~~~unquote(mask) &&& 0xffffffff) >= addr1
+    and (unquote(addr0) &&& unquote(mask)) +
+        (~~~unquote(mask) &&& 0xffffffff) >= addr1
     do
       unquote(description)
     end
   end)
 
   Enum.each(@v6_scopes, fn {prefix, description} ->
-    %Prefix{address: %Address{address: addr0}, mask: mask} = Prefix.from_string!(prefix)
+    %Prefix{address: %Address{address: addr0}, mask: mask} = prefix
+      |> Prefix.from_string!()
     def address_scope(%Address{address: addr1})
     when (unquote(addr0) &&& unquote(mask)) <= addr1
-    and (unquote(addr0) &&& unquote(mask)) + (~~~unquote(mask) &&& 0xffffffffffffffffffffffffffffffff) >= addr1
+    and (unquote(addr0) &&& unquote(mask)) +
+        (~~~unquote(mask) &&& 0xffffffffffffffffffffffffffffffff) >= addr1
     do
       unquote(description)
     end
