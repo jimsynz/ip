@@ -188,7 +188,7 @@ defmodule IP.Prefix do
 
       iex> IP.Prefix.from_string!("192.0.2.0/24")
       ...> |> IP.Prefix.subnet_mask()
-      #IP.Address<255.255.255.0>
+      #IP.Address<255.255.255.0 RESERVED>
   """
   @spec subnet_mask(t) :: binary
   def subnet_mask(%Prefix{mask: mask, address: %Address{version: 4}}) do
@@ -203,7 +203,7 @@ defmodule IP.Prefix do
 
       iex> IP.Prefix.from_string!("192.0.2.0/24")
       ...> |> IP.Prefix.wildcard_mask()
-      #IP.Address<0.0.0.255>
+      #IP.Address<0.0.0.255 CURRENT NETWORK>
   """
   @spec wildcard_mask(t) :: binary
   def wildcard_mask(%Prefix{mask: mask, address: %Address{version: 4}}) do
@@ -220,11 +220,11 @@ defmodule IP.Prefix do
 
       iex> IP.Prefix.from_string!("192.0.2.128/24")
       ...> |> IP.Prefix.first()
-      #IP.Address<192.0.2.0>
+      #IP.Address<192.0.2.0 DOCUMENTATION>
 
       iex> IP.Prefix.from_string!("2001:db8::128/64")
       ...> |> IP.Prefix.first()
-      #IP.Address<2001:db8::>
+      #IP.Address<2001:db8:: DOCUMENTATION>
   """
   @spec first(t) :: Address.t
   def first(%Prefix{address: %Address{address: address, version: version}, mask: mask}) do
@@ -238,11 +238,11 @@ defmodule IP.Prefix do
 
       iex> IP.Prefix.from_string!("192.0.2.128/24")
       ...> |> IP.Prefix.last()
-      #IP.Address<192.0.2.255>
+      #IP.Address<192.0.2.255 DOCUMENTATION>
 
       iex> IP.Prefix.from_string!("2001:db8::128/64")
       ...> |> IP.Prefix.last()
-      #IP.Address<2001:db8::ffff:ffff:ffff:ffff>
+      #IP.Address<2001:db8::ffff:ffff:ffff:ffff DOCUMENTATION>
   """
   def last(%Prefix{address: %Address{address: address, version: 4}, mask: mask}) do
     Address.from_integer!((address &&& mask) + (~~~mask &&& @ipv4_mask), 4)
@@ -304,7 +304,7 @@ defmodule IP.Prefix do
       ...> |> IP.Prefix.from_string!
       ...> |> IP.Prefix.eui_64("60:f8:1d:ad:d8:90")
       ...> |> inspect()
-      "{:ok, #IP.Address<2001:db8::62f8:1dff:fead:d890>}"
+      "{:ok, #IP.Address<2001:db8::62f8:1dff:fead:d890 DOCUMENTATION>}"
   """
   @spec eui_64(t, binary) :: Address.t
   def eui_64(%Prefix{address: %Address{version: 6},
@@ -330,7 +330,7 @@ defmodule IP.Prefix do
       iex> "2001:db8::/64"
       ...> |> IP.Prefix.from_string!
       ...> |> IP.Prefix.eui_64!("60:f8:1d:ad:d8:90")
-      #IP.Address<2001:db8::62f8:1dff:fead:d890>
+      #IP.Address<2001:db8::62f8:1dff:fead:d890 DOCUMENTATION>
   """
   @spec eui_64!(t, binary) :: Address.t
   def eui_64!(prefix, mac) do

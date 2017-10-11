@@ -30,6 +30,8 @@ defmodule IP.Scope do
   ]
 
   @v6_scopes [
+    {"2002::/16",          "GLOBAL UNICAST (6to4)"},
+    {"2001::/32",          "GLOBAL UNICAST (TEREDO)"},
     {"2001:10::/28",       "ORCHID"},
     {"2001:db8::/32",      "DOCUMENTATION"},
     {"2000::/3",           "GLOBAL UNICAST"},
