@@ -228,7 +228,7 @@ defmodule IP.Prefix do
   """
   @spec first(t) :: Address.t
   def first(%Prefix{address: %Address{address: address, version: version}, mask: mask}) do
-    Address.from_integer!(address &&& mask, version)
+    Address.from_integer!(lowest_address(address, mask), version)
   end
 
   @doc """
@@ -245,12 +245,11 @@ defmodule IP.Prefix do
       #IP.Address<2001:db8::ffff:ffff:ffff:ffff DOCUMENTATION>
   """
   def last(%Prefix{address: %Address{address: address, version: 4}, mask: mask}) do
-    Address.from_integer!((address &&& mask) + (~~~mask &&& @ipv4_mask), 4)
+    Address.from_integer!(highest_address(address, mask, 4), 4)
   end
 
   def last(%Prefix{address: %Address{address: address, version: 6}, mask: mask}) do
-    address = (address &&& mask) + (~~~mask &&& @ipv6_mask)
-    Address.from_integer!(address, 6)
+    Address.from_integer!(highest_address(address, mask, 6), 6)
   end
 
   @doc """
@@ -260,38 +259,84 @@ defmodule IP.Prefix do
   ## Examples
 
       iex> IP.Prefix.from_string!("192.0.2.0/24")
-      ...> |> IP.Prefix.contains?(IP.Address.from_string!("192.0.2.127"))
+      ...> |> IP.Prefix.contains_address?(IP.Address.from_string!("192.0.2.127"))
       true
 
       iex> IP.Prefix.from_string!("192.0.2.0/24")
-      ...> |> IP.Prefix.contains?(IP.Address.from_string!("198.51.100.1"))
+      ...> |> IP.Prefix.contains_address?(IP.Address.from_string!("198.51.100.1"))
       false
 
       iex> IP.Prefix.from_string!("2001:db8::/64")
-      ...> |> IP.Prefix.contains?(IP.Address.from_string!("2001:db8::1"))
+      ...> |> IP.Prefix.contains_address?(IP.Address.from_string!("2001:db8::1"))
       true
 
       iex> IP.Prefix.from_string!("2001:db8::/64")
-      ...> |> IP.Prefix.contains?(IP.Address.from_string!("2001:db8:1::1"))
+      ...> |> IP.Prefix.contains_address?(IP.Address.from_string!("2001:db8:1::1"))
       false
   """
-  def contains?(%Prefix{address: %Address{address: addr0, version: 4}, mask: mask} = _prefix,
-                %Address{address: addr1, version: 4} = _address)
-  when (addr0 &&& mask) <= addr1
-   and ((addr0 &&& mask) + (~~~(mask) &&& @ipv4_mask)) >= addr1
+  def contains_address?(%Prefix{address: %Address{address: addr0, version: 4}, mask: mask} = _prefix,
+                        %Address{address: addr1, version: 4} = _address)
+  when lowest_address(addr0, mask) <= addr1
+   and highest_address(addr0, mask, 4) >= addr1
   do
     true
   end
 
-  def contains?(%Prefix{address: %Address{address: addr0, version: 6}, mask: mask} = _prefix,
-                %Address{address: addr1, version: 6} = _address)
-  when (addr0 &&& mask) <= addr1
-   and ((addr0 &&& mask) + (~~~(mask) &&& @ipv6_mask)) >= addr1
+  def contains_address?(%Prefix{address: %Address{address: addr0, version: 6}, mask: mask} = _prefix,
+                        %Address{address: addr1, version: 6} = _address)
+  when lowest_address(addr0, mask) <= addr1
+   and highest_address(addr0, mask, 6) >= addr1
   do
     true
   end
 
-  def contains?(_prefix, _address), do: false
+  def contains_address?(_prefix, _address), do: false
+
+  @doc """
+  Returns `true` or `false` depending on whether the supplied `inside` is
+  completely contained by `outside`.
+
+  ## Examples
+
+      iex> outside = IP.Prefix.from_string!("192.0.2.0/24")
+      ...> inside  = IP.Prefix.from_string!("192.0.2.128/25")
+      ...> IP.Prefix.contains_prefix?(outside, inside)
+      true
+
+      iex> outside = IP.Prefix.from_string!("192.0.2.128/25")
+      ...> inside  = IP.Prefix.from_string!("192.0.2.0/24")
+      ...> IP.Prefix.contains_prefix?(outside, inside)
+      false
+
+      iex> outside = IP.Prefix.from_string!("2001:db8::/64")
+      ...> inside  = IP.Prefix.from_string!("2001:db8::/128")
+      ...> IP.Prefix.contains_prefix?(outside, inside)
+      true
+
+      iex> outside = IP.Prefix.from_string!("2001:db8::/128")
+      ...> inside  = IP.Prefix.from_string!("2001:db8::/64")
+      ...> IP.Prefix.contains_prefix?(outside, inside)
+      false
+
+  """
+  @spec contains_prefix?(t, t) :: true | false
+  def contains_prefix?(%Prefix{address: %Address{address: oaddr, version: 4}, mask: omask} = _outside,
+                       %Prefix{address: %Address{address: iaddr, version: 4}, mask: imask} = _inside)
+  when lowest_address(oaddr, omask) <= lowest_address(iaddr, imask)
+   and highest_address(oaddr, omask, 4) >= highest_address(iaddr, imask, 4)
+  do
+    true
+  end
+
+  def contains_prefix?(%Prefix{address: %Address{address: oaddr, version: 6}, mask: omask} = _outside,
+                       %Prefix{address: %Address{address: iaddr, version: 6}, mask: imask} = _inside)
+  when lowest_address(oaddr, omask) <= lowest_address(iaddr, imask)
+   and highest_address(oaddr, omask, 6) >= highest_address(iaddr, imask, 6)
+  do
+    true
+  end
+
+  def contains_prefix?(_outside, _inside), do: false
 
   @doc """
   Generate an EUI-64 host address within the specifed IPv6 `prefix`.

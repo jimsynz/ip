@@ -35,7 +35,7 @@ defimpl Enumerable, for: IP.Prefix do
       true
   """
   @spec member?(Prefix.t, Address.t) :: {:ok, boolean} | {:error, module}
-  def member?(prefix, %Address{} = address), do: {:ok, Prefix.contains?(prefix, address)}
+  def member?(prefix, %Address{} = address), do: {:ok, Prefix.contains_address?(prefix, address)}
 
   @doc """
   Allows the reduction of `prefix` into a colection of addresses.
