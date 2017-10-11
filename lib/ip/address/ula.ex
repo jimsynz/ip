@@ -3,15 +3,13 @@ defmodule IP.Address.ULA do
   alias IP.Prefix.EUI64
   use Bitwise
 
-  @moduledoc """
-  Used to generate Unique Local Addresses
-  """
+  @moduledoc false
 
   @doc """
   Generates an IPv6 Unique Local Address
   """
   @spec generate(binary, non_neg_integer, true | false) :: \
-    {:ok, Address.ipv4} | {:error, term}
+    {:ok, Address.ipv6} | {:error, term}
   def generate(mac, subnet_id, locally_assigned)
   when is_binary(mac)
    and is_integer(subnet_id) and subnet_id >= 0 and subnet_id <= 0xffff
