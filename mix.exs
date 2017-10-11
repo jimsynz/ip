@@ -1,6 +1,10 @@
 defmodule IP.Mixfile do
   use Mix.Project
 
+  @description """
+  Represtations and tools for IP addresses and networks.
+  """
+
   def project do
     [
       app: :ip,
@@ -8,7 +12,8 @@ defmodule IP.Mixfile do
       elixir: "~> 1.5",
       start_permanent: Mix.env == :prod,
       package: package(),
-      deps: deps()
+      deps: deps(),
+      description: @description
     ]
   end
 
