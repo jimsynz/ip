@@ -12,13 +12,11 @@ defimpl Enumerable, for: IP.Prefix do
 
   ## Examples
 
-      iex> "192.0.2.128/25"
-      ...> |> IP.Prefix.from_string!()
+      iex> ~i(192.0.2.128/25)
       ...> |> Enum.count()
       128
 
-      iex> "2001:db8::/121"
-      ...> |> IP.Prefix.from_string!()
+      iex> ~i(2001:db8::/121)
       ...> |> Enum.count()
       128
   """
@@ -30,8 +28,8 @@ defimpl Enumerable, for: IP.Prefix do
 
   ## Examples
 
-      iex> IP.Prefix.from_string!("192.0.2.128/25")
-      ...> |> Enum.member?(IP.Address.from_string!("192.0.2.250"))
+      iex> ~i(192.0.2.128/25)
+      ...> |> Enum.member?(~i(192.0.2.250))
       true
   """
   @spec member?(Prefix.t, Address.t) :: {:ok, boolean} | {:error, module}
@@ -42,7 +40,7 @@ defimpl Enumerable, for: IP.Prefix do
 
   ## Examples
 
-      iex> IP.Prefix.from_string!("192.0.2.128/29")
+      iex> ~i(192.0.2.128/29)
       ...> |> Stream.filter(fn a -> rem(IP.Address.to_integer(a), 2) == 0 end)
       ...> |> Enum.map(fn a -> IP.Address.to_string(a) end)
       ["192.0.2.130", "192.0.2.132", "192.0.2.134"]

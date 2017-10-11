@@ -21,11 +21,11 @@ defmodule IP.Prefix do
 
   ## Examples
 
-      iex> IP.Prefix.new(IP.Address.from_string!("192.0.2.1"), 24)
-      #IP.Prefix<192.0.2.0/24>
+      iex> IP.Prefix.new(~i(192.0.2.1), 24)
+      #IP.Prefix<192.0.2.0/24 DOCUMENTATION>
 
-      iex> IP.Prefix.new(IP.Address.from_string!("2001:db8::1"), 64)
-      #IP.Prefix<2001:db8::/64>
+      iex> IP.Prefix.new(~i(2001:db8::1), 64)
+      #IP.Prefix<2001:db8::/64 DOCUMENTATION>
   """
   @spec new(Address.t, ipv4_prefix_length | ipv6_prefix_length) :: t
   def new(%Address{address: address, version: 4}, length) when length >= 0 and length <= 32 do
@@ -48,17 +48,17 @@ defmodule IP.Prefix do
       iex> "192.0.2.1/24"
       ...> |> IP.Prefix.from_string()
       ...> |> inspect()
-      "{:ok, #IP.Prefix<192.0.2.0/24>}"
+      "{:ok, #IP.Prefix<192.0.2.0/24 DOCUMENTATION>}"
 
       iex> "192.0.2.1/255.255.255.0"
       ...> |> IP.Prefix.from_string()
       ...> |> inspect()
-      "{:ok, #IP.Prefix<192.0.2.0/24>}"
+      "{:ok, #IP.Prefix<192.0.2.0/24 DOCUMENTATION>}"
 
       iex> "2001:db8::/64"
       ...> |> IP.Prefix.from_string()
       ...> |> inspect()
-      "{:ok, #IP.Prefix<2001:db8::/64>}"
+      "{:ok, #IP.Prefix<2001:db8::/64 DOCUMENTATION>}"
   """
   @spec from_string(binary) :: {:ok, t} | {:error, term}
   def from_string(prefix), do: Parser.parse(prefix)
@@ -71,12 +71,12 @@ defmodule IP.Prefix do
       iex> "192.0.2.1/24"
       ...> |> IP.Prefix.from_string(4)
       ...> |> inspect()
-      "{:ok, #IP.Prefix<192.0.2.0/24>}"
+      "{:ok, #IP.Prefix<192.0.2.0/24 DOCUMENTATION>}"
 
       iex> "192.0.2.1/255.255.255.0"
       ...> |> IP.Prefix.from_string(4)
       ...> |> inspect()
-      "{:ok, #IP.Prefix<192.0.2.0/24>}"
+      "{:ok, #IP.Prefix<192.0.2.0/24 DOCUMENTATION>}"
 
       iex> "2001:db8::/64"
       ...> |> IP.Prefix.from_string(4)
@@ -94,15 +94,15 @@ defmodule IP.Prefix do
 
       iex> "192.0.2.1/24"
       ...> |> IP.Prefix.from_string!()
-      #IP.Prefix<192.0.2.0/24>
+      #IP.Prefix<192.0.2.0/24 DOCUMENTATION>
 
       iex> "192.0.2.1/255.255.255.0"
       ...> |> IP.Prefix.from_string!()
-      #IP.Prefix<192.0.2.0/24>
+      #IP.Prefix<192.0.2.0/24 DOCUMENTATION>
 
       iex> "2001:db8::/64"
       ...> |> IP.Prefix.from_string!()
-      #IP.Prefix<2001:db8::/64>
+      #IP.Prefix<2001:db8::/64 DOCUMENTATION>
   """
   @spec from_string!(binary) :: t
   def from_string!(prefix) do
@@ -119,11 +119,11 @@ defmodule IP.Prefix do
 
       iex> "192.0.2.1/24"
       ...> |> IP.Prefix.from_string!(4)
-      #IP.Prefix<192.0.2.0/24>
+      #IP.Prefix<192.0.2.0/24 DOCUMENTATION>
 
       iex> "192.0.2.1/255.255.255.0"
       ...> |> IP.Prefix.from_string!(4)
-      #IP.Prefix<192.0.2.0/24>
+      #IP.Prefix<192.0.2.0/24 DOCUMENTATION>
   """
   @spec from_string!(binary, 4 | 6) :: t
   def from_string!(prefix, version) do
@@ -138,8 +138,7 @@ defmodule IP.Prefix do
 
   ## Example
 
-      iex> "192.0.2.1/24"
-      ...> |> IP.Prefix.from_string!()
+      iex> ~i(192.0.2.1/24)
       ...> |> IP.Prefix.length()
       24
   """
@@ -151,10 +150,9 @@ defmodule IP.Prefix do
 
   ## Example
 
-      iex> "192.0.2.0/24"
-      ...> |> IP.Prefix.from_string!()
+      iex> ~i(192.0.2.0/24)
       ...> |> IP.Prefix.length(25)
-      #IP.Prefix<192.0.2.0/25>
+      #IP.Prefix<192.0.2.0/25 DOCUMENTATION>
   """
   @spec length(t, ipv4_prefix_length | ipv6_prefix_length) :: t
   def length(%Prefix{address: %Address{version: 4}} = prefix, length)
@@ -174,7 +172,7 @@ defmodule IP.Prefix do
 
   ## Example
 
-      iex> IP.Prefix.from_string!("192.0.2.1/24")
+      iex> ~i(192.0.2.1/24)
       ...> |> IP.Prefix.mask()
       0b11111111111111111111111100000000
   """
@@ -186,7 +184,7 @@ defmodule IP.Prefix do
 
   ## Example
 
-      iex> IP.Prefix.from_string!("192.0.2.0/24")
+      iex> ~i(192.0.2.0/24)
       ...> |> IP.Prefix.subnet_mask()
       #IP.Address<255.255.255.0 RESERVED>
   """
@@ -201,7 +199,7 @@ defmodule IP.Prefix do
 
   ## Example
 
-      iex> IP.Prefix.from_string!("192.0.2.0/24")
+      iex> ~i(192.0.2.0/24)
       ...> |> IP.Prefix.wildcard_mask()
       #IP.Address<0.0.0.255 CURRENT NETWORK>
   """
@@ -218,11 +216,11 @@ defmodule IP.Prefix do
 
   ## Examples
 
-      iex> IP.Prefix.from_string!("192.0.2.128/24")
+      iex> ~i(192.0.2.128/24)
       ...> |> IP.Prefix.first()
       #IP.Address<192.0.2.0 DOCUMENTATION>
 
-      iex> IP.Prefix.from_string!("2001:db8::128/64")
+      iex> ~i(2001:db8::128/64)
       ...> |> IP.Prefix.first()
       #IP.Address<2001:db8:: DOCUMENTATION>
   """
@@ -236,11 +234,11 @@ defmodule IP.Prefix do
 
   ## Examples
 
-      iex> IP.Prefix.from_string!("192.0.2.128/24")
+      iex> ~i(192.0.2.128/24)
       ...> |> IP.Prefix.last()
       #IP.Address<192.0.2.255 DOCUMENTATION>
 
-      iex> IP.Prefix.from_string!("2001:db8::128/64")
+      iex> ~i(2001:db8::128/64)
       ...> |> IP.Prefix.last()
       #IP.Address<2001:db8::ffff:ffff:ffff:ffff DOCUMENTATION>
   """
@@ -258,23 +256,23 @@ defmodule IP.Prefix do
 
   ## Examples
 
-      iex> IP.Prefix.from_string!("192.0.2.0/24")
-      ...> |> IP.Prefix.contains_address?(IP.Address.from_string!("192.0.2.127"))
+      iex> ~i(192.0.2.0/24)
+      ...> |> IP.Prefix.contains_address?(~i(192.0.2.127))
       true
 
-      iex> IP.Prefix.from_string!("192.0.2.0/24")
-      ...> |> IP.Prefix.contains_address?(IP.Address.from_string!("198.51.100.1"))
+      iex> ~i(192.0.2.0/24)
+      ...> |> IP.Prefix.contains_address?(~i(198.51.100.1))
       false
 
-      iex> IP.Prefix.from_string!("2001:db8::/64")
-      ...> |> IP.Prefix.contains_address?(IP.Address.from_string!("2001:db8::1"))
+      iex> ~i(2001:db8::/64)
+      ...> |> IP.Prefix.contains_address?(~i(2001:db8::1))
       true
 
-      iex> IP.Prefix.from_string!("2001:db8::/64")
-      ...> |> IP.Prefix.contains_address?(IP.Address.from_string!("2001:db8:1::1"))
+      iex> ~i(2001:db8::/64)
+      ...> |> IP.Prefix.contains_address?(~i(2001:db8:1::1))
       false
 
-      iex> outside = IP.Prefix.from_string!("2001:db8::/64")
+      iex> outside = ~i(2001:db8::/64)
       ...> inside  = IP.Prefix.eui_64!(outside, "60:f8:1d:ad:d8:90")
       ...> IP.Prefix.contains_address?(outside, inside)
       true
@@ -304,23 +302,23 @@ defmodule IP.Prefix do
 
   ## Examples
 
-      iex> outside = IP.Prefix.from_string!("192.0.2.0/24")
-      ...> inside  = IP.Prefix.from_string!("192.0.2.128/25")
+      iex> outside = ~i(192.0.2.0/24)
+      ...> inside  = ~i(192.0.2.128/25)
       ...> IP.Prefix.contains_prefix?(outside, inside)
       true
 
-      iex> outside = IP.Prefix.from_string!("192.0.2.128/25")
-      ...> inside  = IP.Prefix.from_string!("192.0.2.0/24")
+      iex> outside = ~i(192.0.2.128/25)
+      ...> inside  = ~i(192.0.2.0/24)
       ...> IP.Prefix.contains_prefix?(outside, inside)
       false
 
-      iex> outside = IP.Prefix.from_string!("2001:db8::/64")
-      ...> inside  = IP.Prefix.from_string!("2001:db8::/128")
+      iex> outside = ~i(2001:db8::/64)
+      ...> inside  = ~i(2001:db8::/128)
       ...> IP.Prefix.contains_prefix?(outside, inside)
       true
 
-      iex> outside = IP.Prefix.from_string!("2001:db8::/128")
-      ...> inside  = IP.Prefix.from_string!("2001:db8::/64")
+      iex> outside = ~i(2001:db8::/128)
+      ...> inside  = ~i(2001:db8::/64)
       ...> IP.Prefix.contains_prefix?(outside, inside)
       false
 
@@ -351,8 +349,7 @@ defmodule IP.Prefix do
 
   ## Examples
 
-      iex> "2001:db8::/64"
-      ...> |> IP.Prefix.from_string!
+      iex> ~i(2001:db8::/64)
       ...> |> IP.Prefix.eui_64("60:f8:1d:ad:d8:90")
       ...> |> inspect()
       "{:ok, #IP.Address<2001:db8::62f8:1dff:fead:d890 DOCUMENTATION>}"
@@ -378,8 +375,7 @@ defmodule IP.Prefix do
 
   ## Examples
 
-      iex> "2001:db8::/64"
-      ...> |> IP.Prefix.from_string!
+      iex> ~i(2001:db8::/64)
       ...> |> IP.Prefix.eui_64!("60:f8:1d:ad:d8:90")
       #IP.Address<2001:db8::62f8:1dff:fead:d890 DOCUMENTATION>
   """
@@ -396,13 +392,11 @@ defmodule IP.Prefix do
 
   ## Examples
 
-      iex> "192.0.2.0/24"
-      ...> |> IP.Prefix.from_string!()
+      iex> ~i(192.0.2.0/24)
       ...> |> IP.Prefix.space()
       256
 
-      iex> "2001:db8::/64"
-      ...> |> IP.Prefix.from_string!()
+      iex> ~i(2001:db8::/64)
       ...> |> IP.Prefix.space()
       18446744073709551616
   """
@@ -424,13 +418,11 @@ defmodule IP.Prefix do
 
   ## Examples
 
-      iex> "192.0.2.0/24"
-      ...> |> IP.Prefix.from_string!()
+      iex> ~i(192.0.2.0/24)
       ...> |> IP.Prefix.usable()
       254
 
-      iex> "2001:db8::/64"
-      ...> |> IP.Prefix.from_string!()
+      iex> ~i(2001:db8::/64)
       ...> |> IP.Prefix.usable()
       18446744073709551616
   """
@@ -444,5 +436,4 @@ defmodule IP.Prefix do
   def usable(%Prefix{address: %Address{version: 6}} = prefix) do
     Prefix.space(prefix)
   end
-
 end

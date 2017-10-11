@@ -2,6 +2,7 @@ defmodule IP.Scope do
   alias IP.{Prefix, Address}
   use Bitwise
   require IP.Prefix
+  import IP.Prefix.Helpers
 
   @moduledoc """
   Implements scope lookup for all (currently) known scopes.
@@ -51,11 +52,11 @@ defmodule IP.Scope do
 
   ## Examples
 
-      iex> IP.Address.from_string!("192.0.2.0")
+      iex> ~i(192.0.2.0)
       ...> |> IP.Scope.address_scope()
       "DOCUMENTATION"
 
-      iex> IP.Address.from_string!("2001:db8::")
+      iex> ~i(2001:db8::)
       ...> |> IP.Scope.address_scope()
       "DOCUMENTATION"
   """
@@ -64,10 +65,9 @@ defmodule IP.Scope do
   Enum.each(@v4_scopes, fn {prefix, description} ->
     %Prefix{address: %Address{address: addr0}, mask: mask} = prefix
       |> Prefix.from_string!()
-    def address_scope(%Address{address: addr1})
-    when (unquote(addr0) &&& unquote(mask)) <= addr1
-    and (unquote(addr0) &&& unquote(mask)) +
-        (~~~unquote(mask) &&& 0xffffffff) >= addr1
+    def address_scope(%Address{address: addr1, version: 4})
+    when lowest_address(unquote(addr0), unquote(mask)) <= addr1
+     and highest_address(unquote(addr0), unquote(mask), 4) >= addr1
     do
       unquote(description)
     end
@@ -76,10 +76,46 @@ defmodule IP.Scope do
   Enum.each(@v6_scopes, fn {prefix, description} ->
     %Prefix{address: %Address{address: addr0}, mask: mask} = prefix
       |> Prefix.from_string!()
-    def address_scope(%Address{address: addr1})
-    when (unquote(addr0) &&& unquote(mask)) <= addr1
-    and (unquote(addr0) &&& unquote(mask)) +
-        (~~~unquote(mask) &&& 0xffffffffffffffffffffffffffffffff) >= addr1
+    def address_scope(%Address{address: addr1, version: 6})
+    when lowest_address(unquote(addr0), unquote(mask)) <= addr1
+     and highest_address(unquote(addr0), unquote(mask), 6) >= addr1
+    do
+      unquote(description)
+    end
+  end)
+
+  @doc """
+  Return the scope of `prefix`
+
+  ## Examples
+
+      iex> ~i(192.0.2.0/24)
+      ...> |> IP.Scope.prefix_scope()
+      "DOCUMENTATION"
+
+      iex> ~i(2001:db8::/32)
+      ...> |> IP.Scope.prefix_scope()
+      "DOCUMENTATION"
+  """
+  @spec prefix_scope(Prefix.t) :: binary
+
+  Enum.each(@v4_scopes, fn {prefix0, description} ->
+    %Prefix{address: %Address{address: addr0}, mask: mask0} = prefix0
+      |> Prefix.from_string!()
+    def prefix_scope(%Prefix{address: %Address{address: addr1, version: 4}, mask: mask1})
+    when lowest_address(unquote(addr0), unquote(mask0)) <= lowest_address(addr1, mask1)
+     and highest_address(unquote(addr0), unquote(mask0), 4) >= highest_address(addr1, mask1, 4)
+    do
+      unquote(description)
+    end
+  end)
+
+  Enum.each(@v6_scopes, fn {prefix0, description} ->
+    %Prefix{address: %Address{address: addr0}, mask: mask0} = prefix0
+      |> Prefix.from_string!()
+    def prefix_scope(%Prefix{address: %Address{address: addr1, version: 6}, mask: mask1})
+    when lowest_address(unquote(addr0), unquote(mask0)) <= lowest_address(addr1, mask1)
+     and highest_address(unquote(addr0), unquote(mask0), 6) >= highest_address(addr1, mask1, 6)
     do
       unquote(description)
     end

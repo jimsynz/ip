@@ -223,11 +223,11 @@ defmodule IP.Address do
 
   ## Examples
 
-      iex> IP.Address.from_string!("192.0.2.1", 4)
+      iex> ~i(192.0.2.1)
       ...> |> IP.Address.to_string()
       "192.0.2.1"
 
-      iex> IP.Address.from_string!("2001:db8::1", 6)
+      iex> ~i(2001:db8::1)
       ...> |> IP.Address.to_string()
       "2001:db8::1"
   """
@@ -261,9 +261,9 @@ defmodule IP.Address do
 
   ## Examples
 
-      iex> IP.Address.from_string!("192.0.2.1", 4)
+      iex> ~i(192.0.2.1)
       ...> |> IP.Address.to_prefix(32)
-      #IP.Prefix<192.0.2.1/32>
+      #IP.Prefix<192.0.2.1/32 DOCUMENTATION>
   """
   @spec to_prefix(t, Prefix.ipv4_prefix_length | Prefix.ipv6_prefix_length) \
     :: Prefix.t
@@ -274,13 +274,11 @@ defmodule IP.Address do
 
   ## Examples
 
-      iex> "192.0.2.1"
-      ...> |> IP.Address.from_string!
+      iex> ~i(192.0.2.1)
       ...> |> IP.Address.version()
       4
 
-      iex> "2001:db8::1"
-      ...> |> IP.Address.from_string!
+      iex> ~i(2001:db8::1)
       ...> |> IP.Address.version()
       6
   """
@@ -292,13 +290,11 @@ defmodule IP.Address do
 
   ## Examples
 
-      iex> "192.0.2.1"
-      ...> |> IP.Address.from_string!
+      iex> ~i(192.0.2.1)
       ...> |> IP.Address.to_integer()
       3221225985
 
-      iex> "2001:db8::1"
-      ...> |> IP.Address.from_string!
+      iex> ~i(2001:db8::1)
       ...> |> IP.Address.to_integer()
       42540766411282592856903984951653826561
   """
@@ -310,13 +306,11 @@ defmodule IP.Address do
 
   ## Examples
 
-      iex> "192.0.2.1"
-      ...> |> IP.Address.from_string!()
+      iex> ~i(192.0.2.1)
       ...> |> IP.Address.v6?
       false
 
-      iex> "2001:db8::"
-      ...> |> IP.Address.from_string!()
+      iex> ~i(2001:db8::)
       ...> |> IP.Address.v6?
       true
   """
@@ -329,13 +323,11 @@ defmodule IP.Address do
 
   ## Examples
 
-      iex> "192.0.2.1"
-      ...> |> IP.Address.from_string!()
+      iex> ~i(192.0.2.1)
       ...> |> IP.Address.v4?
       true
 
-      iex> "2001:db8::"
-      ...> |> IP.Address.from_string!()
+      iex> ~i(2001:db8::)
       ...> |> IP.Address.v4?
       false
   """
@@ -348,8 +340,7 @@ defmodule IP.Address do
 
   ## Examples
 
-      iex> "2001:db8::62f8:1dff:fead:d890"
-      ...> |> IP.Address.from_string!()
+      iex> ~i(2001:db8::62f8:1dff:fead:d890)
       ...> |> IP.Address.eui_64?()
       true
   """
@@ -365,8 +356,7 @@ defmodule IP.Address do
 
   ## Examples
 
-      iex> "2001:db8::62f8:1dff:fead:d890"
-      ...> |> IP.Address.from_string!()
+      iex> ~i(2001:db8::62f8:1dff:fead:d890)
       ...> |> IP.Address.eui_64_mac()
       {:ok, "60f8.1dad.d890"}
   """
@@ -392,8 +382,7 @@ defmodule IP.Address do
 
   ## Examples
 
-      iex> "192.0.2.1"
-      ...> |> IP.Address.from_string!()
+      iex> ~i(192.0.2.1)
       ...> |> IP.Address.to_6to4()
       #IP.Address<2002:c000:201:: GLOBAL UNICAST (6to4)>
   """
@@ -410,13 +399,11 @@ defmodule IP.Address do
 
   ## Examples
 
-      iex> "2002:c000:201::"
-      ...> |> IP.Address.from_string!()
+      iex> ~i(2002:c000:201::)
       ...> |> IP.Address.is_6to4?()
       true
 
-      iex> "2001:db8::"
-      ...> |> IP.Address.from_string!()
+      iex> ~i(2001:db8::)
       ...> |> IP.Address.is_6to4?()
       false
   """
@@ -431,14 +418,12 @@ defmodule IP.Address do
 
   ## Examples
 
-      iex> "2002:c000:201::"
-      ...> |> IP.Address.from_string!()
+      iex> ~i(2002:c000:201::)
       ...> |> IP.Address.from_6to4()
       ...> |> inspect()
       "{:ok, #IP.Address<192.0.2.1 DOCUMENTATION>}"
 
-      iex> "2001:db8::"
-      ...> |> IP.Address.from_string!()
+      iex> ~i(2001:db8::)
       ...> |> IP.Address.from_6to4()
       {:error, "Not a 6to4 address"}
   """
@@ -457,8 +442,7 @@ defmodule IP.Address do
 
   ## Examples
 
-      iex> "2001::"
-      ...> |> IP.Address.from_string!()
+      iex> ~i(2001::)
       ...> |> IP.Address.is_teredo?()
       true
   """
@@ -473,20 +457,17 @@ defmodule IP.Address do
 
   ## Examples
 
-      iex> "2001:0:4136:e378:8000:63bf:3fff:fdd2"
-      ...> |> IP.Address.from_string!()
+      iex> ~i(2001:0:4136:e378:8000:63bf:3fff:fdd2)
       ...> |> IP.Address.teredo()
       ...> |> Map.get(:server)
       #IP.Address<65.54.227.120 GLOBAL UNICAST>
 
-      iex> "2001:0:4136:e378:8000:63bf:3fff:fdd2"
-      ...> |> IP.Address.from_string!()
+      iex> ~i(2001:0:4136:e378:8000:63bf:3fff:fdd2)
       ...> |> IP.Address.teredo()
       ...> |> Map.get(:client)
       #IP.Address<63.255.253.210 GLOBAL UNICAST>
 
-      iex> "2001:0:4136:e378:8000:63bf:3fff:fdd2"
-      ...> |> IP.Address.from_string!()
+      iex> ~i(2001:0:4136:e378:8000:63bf:3fff:fdd2)
       ...> |> IP.Address.teredo()
       ...> |> Map.get(:port)
       25535

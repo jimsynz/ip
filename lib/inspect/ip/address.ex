@@ -11,10 +11,10 @@ defimpl Inspect, for: IP.Address do
 
   ## Examples
 
-      iex> IP.Address.from_string!("192.0.2.1", 4)
+      iex> ~i(192.0.2.1)
       #IP.Address<192.0.2.1 DOCUMENTATION>
 
-      iex> IP.Address.from_string!("2001:db8::1", 6)
+      iex> ~i(2001:db8::1)
       #IP.Address<2001:db8::1 DOCUMENTATION>
   """
   @spec inspect(Address.t, list) :: binary

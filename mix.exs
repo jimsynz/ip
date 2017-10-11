@@ -4,11 +4,12 @@ defmodule IP.Mixfile do
   @description """
   Represtations and tools for IP addresses and networks.
   """
+  @version "0.2.0"
 
   def project do
     [
       app: :ip,
-      version: "0.1.0",
+      version: @version,
       elixir: "~> 1.5",
       start_permanent: Mix.env == :prod,
       package: package(),
