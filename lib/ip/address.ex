@@ -395,7 +395,7 @@ defmodule IP.Address do
       iex> "192.0.2.1"
       ...> |> IP.Address.from_string!()
       ...> |> IP.Address.to_6to4()
-      #IP.Address<2002:c000:201::>
+      #IP.Address<2002:c000:201:: GLOBAL UNICAST (6to4)>
   """
   @spec to_6to4(t) :: {:ok, t} | {:error, term}
   def to_6to4(%Address{address: address, version: 4}) do
@@ -435,7 +435,7 @@ defmodule IP.Address do
       ...> |> IP.Address.from_string!()
       ...> |> IP.Address.from_6to4()
       ...> |> inspect()
-      "{:ok, #IP.Address<192.0.2.1>}"
+      "{:ok, #IP.Address<192.0.2.1 DOCUMENTATION>}"
 
       iex> "2001:db8::"
       ...> |> IP.Address.from_string!()
@@ -477,13 +477,13 @@ defmodule IP.Address do
       ...> |> IP.Address.from_string!()
       ...> |> IP.Address.teredo()
       ...> |> Map.get(:server)
-      #IP.Address<65.54.227.120>
+      #IP.Address<65.54.227.120 GLOBAL UNICAST>
 
       iex> "2001:0:4136:e378:8000:63bf:3fff:fdd2"
       ...> |> IP.Address.from_string!()
       ...> |> IP.Address.teredo()
       ...> |> Map.get(:client)
-      #IP.Address<63.255.253.210>
+      #IP.Address<63.255.253.210 GLOBAL UNICAST>
 
       iex> "2001:0:4136:e378:8000:63bf:3fff:fdd2"
       ...> |> IP.Address.from_string!()
