@@ -275,7 +275,7 @@ defmodule IP.Prefix do
       false
 
       iex> outside = IP.Prefix.from_string!("2001:db8::/64")
-      ...> inside  = IP.Prefix.eui_64(outside, "60:f8:1d:ad:d8:90")
+      ...> inside  = IP.Prefix.eui_64!(outside, "60:f8:1d:ad:d8:90")
       ...> IP.Prefix.contains_address?(outside, inside)
       true
 
