@@ -26,4 +26,24 @@ defmodule IP.Prefix.Helpers do
     acc = fun.(n, acc)
     n_times_reduce(n - 1, acc, fun)
   end
+
+  defmacro lowest_address(addr, mask) do
+    quote do
+      unquote(addr) &&& unquote(mask)
+    end
+  end
+
+  defmacro highest_address(addr, mask, 4) do
+    quote do
+      (unquote(addr) &&& unquote(mask)) +
+      (~~~unquote(mask) &&& 0xffffffff)
+    end
+  end
+
+  defmacro highest_address(addr, mask, 6) do
+    quote do
+      (unquote(addr) &&& unquote(mask)) +
+      (~~~unquote(mask) &&& 0xffffffffffffffffffffffffffffffff)
+    end
+  end
 end
