@@ -273,6 +273,12 @@ defmodule IP.Prefix do
       iex> IP.Prefix.from_string!("2001:db8::/64")
       ...> |> IP.Prefix.contains_address?(IP.Address.from_string!("2001:db8:1::1"))
       false
+
+      iex> outside = IP.Prefix.from_string!("2001:db8::/64")
+      ...> inside  = IP.Prefix.eui_64(outside, "60:f8:1d:ad:d8:90")
+      ...> IP.Prefix.contains_address?(outside, inside)
+      true
+
   """
   def contains_address?(%Prefix{address: %Address{address: addr0, version: 4}, mask: mask} = _prefix,
                         %Address{address: addr1, version: 4} = _address)
