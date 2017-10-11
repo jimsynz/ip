@@ -47,7 +47,7 @@ defmodule IP.Scope do
   ]
 
   @doc """
-  Return the scope of `address``
+  Return the scope of `address`
 
   ## Examples
 

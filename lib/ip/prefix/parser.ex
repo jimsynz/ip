@@ -2,9 +2,7 @@ defmodule IP.Prefix.Parser do
   alias IP.{Prefix, Address}
   import IP.Prefix.Helpers
 
-  @moduledoc """
-  Used internally by `IP.Prefix.from_string` to parse IP prefixes.
-  """
+  @moduledoc false
 
   @doc """
   Attempts to parse a `prefix` of unknown IP version.

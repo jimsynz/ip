@@ -1,7 +1,5 @@
 defmodule IP.Address.Helpers do
-  @moduledoc """
-  Helpful macros related to IP addresses.
-  """
+  @moduledoc false
 
   @doc """
   Guard clause macro for "between 0 and 0xffffffff"

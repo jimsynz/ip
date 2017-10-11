@@ -1,9 +1,7 @@
 defmodule IP.Prefix.EUI64 do
   use Bitwise
 
-  @moduledoc """
-  Handles functions related to EUI64 addresses.
-  """
+  @moduledoc false
 
   @doc """
   Parse a mac address into an integer.
