@@ -15,12 +15,12 @@ defmodule IP.Prefix.Parser do
       iex> "192.0.2.1/25"
       ...> |> IP.Prefix.Parser.parse()
       ...> |> inspect()
-      "{:ok, #IP.Prefix<192.0.2.0/25>}"
+      "{:ok, #IP.Prefix<192.0.2.0/25 DOCUMENTATION>}"
 
       iex> "2001:db8::/64"
       ...> |> IP.Prefix.Parser.parse()
       ...> |> inspect()
-      "{:ok, #IP.Prefix<2001:db8::/64>}"
+      "{:ok, #IP.Prefix<2001:db8::/64 DOCUMENTATION>}"
   """
   @spec parse(binary) :: Prefix.t
   def parse(prefix) do
@@ -42,12 +42,12 @@ defmodule IP.Prefix.Parser do
       iex> "192.0.2.1/25"
       ...> |> IP.Prefix.Parser.parse(4)
       ...> |> inspect()
-      "{:ok, #IP.Prefix<192.0.2.0/25>}"
+      "{:ok, #IP.Prefix<192.0.2.0/25 DOCUMENTATION>}"
 
       iex> "2001:db8::/64"
       ...> |> IP.Prefix.Parser.parse(6)
       ...> |> inspect()
-      "{:ok, #IP.Prefix<2001:db8::/64>}"
+      "{:ok, #IP.Prefix<2001:db8::/64 DOCUMENTATION>}"
   """
   @spec parse(binary, 4 | 6) :: Prefix.t
   def parse(prefix, 4 = _version) do

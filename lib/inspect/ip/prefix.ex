@@ -1,5 +1,5 @@
 defimpl Inspect, for: IP.Prefix do
-  alias IP.Prefix
+  alias IP.{Prefix, Scope}
   import Inspect.Algebra
 
   @moduledoc """
@@ -11,12 +11,13 @@ defimpl Inspect, for: IP.Prefix do
 
   ## Examples
 
-      iex> IP.Address.from_string!("192.0.2.1", 4)
+      iex> ~i(192.0.2.1)
       ...> |> IP.Address.to_prefix(32)
-      #IP.Prefix<192.0.2.1/32>
+      #IP.Prefix<192.0.2.1/32 DOCUMENTATION>
   """
   @spec inspect(Prefix.t, list) :: binary
   def inspect(%Prefix{} = prefix, _opts) do
-    concat ["#IP.Prefix<#{prefix}>"]
+    scope = Scope.prefix_scope(prefix)
+    concat ["#IP.Prefix<#{prefix} #{scope}>"]
   end
 end

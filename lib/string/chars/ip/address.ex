@@ -8,10 +8,10 @@ defimpl String.Chars, for: IP.Address do
 
   ## Examples
 
-      iex> "#{IP.Address.from_string!("192.0.2.1", 4)}"
+      iex> "#{~i(192.0.2.1)}"
       "192.0.2.1"
 
-      iex> "#{IP.Address.from_string!("2001:db8::1", 6)}"
+      iex> "#{~i(2001:db8::1)}"
       "2001:db8::1"
   """
   def to_string(address), do: IP.Address.to_string(address)
