@@ -13,7 +13,7 @@ by adding `ip` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:ip, "~> 0.1.0"}
+    {:ip, "~> 0.2.0"}
   ]
 end
 ```
@@ -22,15 +22,13 @@ end
 
 `ip` provides representations for IP addresses and subnets for Elixir with a bunch of helpful stuff tacked on the side.
 
-    iex> "192.0.2.1"
-    ...> |> IP.Address.from_string!
+    iex> ~i(192.0.2.1)
     #IP.Address<192.0.2.1 DOCUMENTATION>
 
-    iex> "2001:db8::"
-    ...> |> IP.Address.from_string!
+    iex> ~i(2001:db8::)
     #IP.Address<2001:db8:: DOCUMENTATION>
 
-    iex> outside = IP.Prefix.from_string!("2001:db8::/64")
+    iex> outside = ~i(2001:db8::/64)
     ...> inside  = IP.Prefix.eui_64!(outside, "60:f8:1d:ad:d8:90")
     ...> IP.Prefix.contains_address?(outside, inside)
     true
