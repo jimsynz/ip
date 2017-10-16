@@ -13,7 +13,7 @@ test:
      - mix test
      - mix credo --strict
      - mix inch --pedantic
-     - mix dialyzer --halt-exit-status
+    #  - mix dialyzer --halt-exit-status
 
 after_script:
   - mix inch.report
