@@ -360,7 +360,7 @@ defmodule IP.Address do
       ...> |> IP.Address.eui_64_mac()
       {:ok, "60f8.1dad.d890"}
   """
-  @spec eui_64_mac(t) :: binary
+  @spec eui_64_mac(t) :: {:ok, binary} | {:error, term}
   def eui_64_mac(%Address{address: address, version: 6})
   when (address &&& 0x20000fffe000000) == 0x20000fffe000000
   do

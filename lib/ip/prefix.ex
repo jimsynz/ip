@@ -188,7 +188,7 @@ defmodule IP.Prefix do
       ...> |> IP.Prefix.subnet_mask()
       #IP.Address<255.255.255.0 RESERVED>
   """
-  @spec subnet_mask(t) :: binary
+  @spec subnet_mask(t) :: Address.t
   def subnet_mask(%Prefix{mask: mask, address: %Address{version: 4}}) do
     mask
     |> Address.from_integer!(4)
@@ -203,7 +203,7 @@ defmodule IP.Prefix do
       ...> |> IP.Prefix.wildcard_mask()
       #IP.Address<0.0.0.255 CURRENT NETWORK>
   """
-  @spec wildcard_mask(t) :: binary
+  @spec wildcard_mask(t) :: Address.t
   def wildcard_mask(%Prefix{mask: mask, address: %Address{version: 4}}) do
     mask
     |> bnot()
@@ -354,7 +354,7 @@ defmodule IP.Prefix do
       ...> |> inspect()
       "{:ok, #IP.Address<2001:db8::62f8:1dff:fead:d890 DOCUMENTATION>}"
   """
-  @spec eui_64(t, binary) :: Address.t
+  @spec eui_64(t, binary) :: {:ok, Address.t} | {:error, term}
   def eui_64(%Prefix{address: %Address{version: 6},
                      mask: 0xffffffffffffffff0000000000000000} = prefix, mac)
   do

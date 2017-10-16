@@ -47,10 +47,12 @@ defimpl Enumerable, for: IP.Prefix do
   """
   @spec reduce(Prefix.t, Enumerable.acc, Enumerable.reducer) :: \
     Enumerable.result
-  def reduce(_,                   {:halt, acc},    _fun), do: {:halted, acc}
-  def reduce({prefix, pos, last}, {:suspend, acc}, fun),  do: {:suspended, acc, &reduce({prefix, pos, last}, &1, fun)}
+  def reduce(%Prefix{} = prefix, acc, reducer), do: do_reduce(prefix, acc, reducer)
 
-  def reduce(%Prefix{} = prefix, {:cont, acc}, fun) do
+  defp do_reduce(_,                   {:halt, acc},    _fun), do: {:halted, acc}
+  defp do_reduce({prefix, pos, last}, {:suspend, acc}, fun),  do: {:suspended, acc, &do_reduce({prefix, pos, last}, &1, fun)}
+
+  defp do_reduce(%Prefix{} = prefix, {:cont, acc}, fun) do
     first = prefix
       |> Prefix.first()
       |> Address.to_integer()
@@ -59,16 +61,16 @@ defimpl Enumerable, for: IP.Prefix do
       |> Prefix.last()
       |> Address.to_integer()
 
-    reduce({prefix, first, last}, {:cont, acc}, fun)
+      do_reduce({prefix, first, last}, {:cont, acc}, fun)
   end
 
-  def reduce({%Prefix{address: %Address{version: version}} = prefix, pos, last}, {:cont, acc}, fun) do
+  defp do_reduce({%Prefix{address: %Address{version: version}} = prefix, pos, last}, {:cont, acc}, fun) do
     case pos do
       ^last -> {:done, acc}
       pos ->
         pos = pos + 1
         next = Address.from_integer!(pos, version)
-        reduce({prefix, pos, last}, fun.(next, acc), fun)
+        do_reduce({prefix, pos, last}, fun.(next, acc), fun)
     end
   end
 end

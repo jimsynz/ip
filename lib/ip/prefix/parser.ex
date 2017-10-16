@@ -22,7 +22,7 @@ defmodule IP.Prefix.Parser do
       ...> |> inspect()
       "{:ok, #IP.Prefix<2001:db8::/64 DOCUMENTATION>}"
   """
-  @spec parse(binary) :: Prefix.t
+  @spec parse(binary) :: {:ok, Prefix.t} | {:error, term}
   def parse(prefix) do
     case parse(prefix, 4) do
       {:ok, prefix} -> {:ok, prefix}
@@ -49,7 +49,7 @@ defmodule IP.Prefix.Parser do
       ...> |> inspect()
       "{:ok, #IP.Prefix<2001:db8::/64 DOCUMENTATION>}"
   """
-  @spec parse(binary, 4 | 6) :: Prefix.t
+  @spec parse(binary, 4 | 6) :: {:ok, Prefix.t} | {:error, term}
   def parse(prefix, 4 = _version) do
     with {:ok, address, mask} <- ensure_contains_slash(prefix),
          {:ok, address}       <- Address.from_string(address, 4),
