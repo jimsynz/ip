@@ -9,10 +9,20 @@ defmodule IP.Address do
   Simple representations of IP Addresses.
   """
 
-  @type t :: %Address{}
+  @typedoc "Valid IPv4 address - integer between zero and 32 ones."
   @type ipv4 :: 0..0xffffffff
+
+  @typedoc "Valid IPv6 address - integer between zero and 128 ones."
   @type ipv6 :: 0..0xffffffffffffffffffffffffffffffff
-  @type ip_version :: 4 | 6
+
+  @typedoc "Valid IP address"
+  @type ip :: ipv4 | ipv6
+
+  @typedoc "Valid IP version (currently only 4 and 6 are deployed in the wild)."
+  @type version :: 4 | 6
+
+  @typedoc "IP address struct type, contains a valid address and version."
+  @type t :: %Address{address: ip, version: version}
 
   @doc """
   Convert from (packed) binary representations (either 32 or 128 bits long) into an address.
@@ -71,7 +81,7 @@ defmodule IP.Address do
       ...> |> IP.Address.from_integer(6)
       {:ok, %IP.Address{address: 42540766411282592856903984951653826561, version: 6}}
   """
-  @spec from_integer(ipv4 | ipv6, ip_version) :: {:ok, t} | {:error, term}
+  @spec from_integer(ip, version) :: {:ok, t} | {:error, term}
   def from_integer(address, 4) when valid_ipv4_integer?(address) do
     {:ok, %Address{address: address, version: 4}}
   end
@@ -98,7 +108,7 @@ defmodule IP.Address do
       ...> |> IP.Address.from_integer!(6)
       %IP.Address{address: 42540766411282592856903984951653826561, version: 6}
   """
-  @spec from_integer!(ipv4 | ipv6, ip_version) :: t
+  @spec from_integer!(ip, version) :: t
   def from_integer!(address, version) do
     case from_integer(address, version) do
       {:ok, address} -> address
@@ -169,7 +179,7 @@ defmodule IP.Address do
       ...> |> IP.Address.from_string(6)
       {:ok, %IP.Address{address: 42540766411282592856903984951653826561, version: 6}}
   """
-  @spec from_string(binary, ip_version) :: {:ok, t} | {:error, term}
+  @spec from_string(binary, version) :: {:ok, t} | {:error, term}
   def from_string(address, 4) when is_binary(address) do
     case :inet.parse_ipv4strict_address(String.to_charlist(address)) do
       {:ok, addr} ->
@@ -210,7 +220,7 @@ defmodule IP.Address do
       ...> |> IP.Address.from_string!(6)
       %IP.Address{address: 42540766411282592856903984951653826561, version: 6}
   """
-  @spec from_string!(binary, ip_version) :: t
+  @spec from_string!(binary, version) :: t
   def from_string!(address, version) do
     case from_string(address, version) do
       {:ok, address} -> address
@@ -265,8 +275,7 @@ defmodule IP.Address do
       ...> |> IP.Address.to_prefix(32)
       #IP.Prefix<192.0.2.1/32 DOCUMENTATION>
   """
-  @spec to_prefix(t, Prefix.ipv4_prefix_length | Prefix.ipv6_prefix_length) \
-    :: Prefix.t
+  @spec to_prefix(t, Prefix.prefix_length) :: Prefix.t
   def to_prefix(%Address{} = address, length), do: Prefix.new(address, length)
 
   @doc """
@@ -282,7 +291,7 @@ defmodule IP.Address do
       ...> |> IP.Address.version()
       6
   """
-  @spec version(t) :: 4 | 6
+  @spec version(t) :: version
   def version(%Address{version: version}), do: version
 
   @doc """
@@ -298,7 +307,7 @@ defmodule IP.Address do
       ...> |> IP.Address.to_integer()
       42540766411282592856903984951653826561
   """
-  @spec to_integer(t) :: ipv4 | ipv6
+  @spec to_integer(t) :: ip
   def to_integer(%Address{address: address}), do: address
 
   @doc """
@@ -314,7 +323,7 @@ defmodule IP.Address do
       ...> |> IP.Address.v6?
       true
   """
-  @spec v6?(t) :: true | false
+  @spec v6?(t) :: boolean
   def v6?(%Address{version: 6} = _address), do: true
   def v6?(_address), do: false
 
@@ -331,7 +340,7 @@ defmodule IP.Address do
       ...> |> IP.Address.v4?
       false
   """
-  @spec v4?(t) :: true | false
+  @spec v4?(t) :: boolean
   def v4?(%Address{version: 4} = _address), do: true
   def v4?(_address), do: false
 
@@ -344,7 +353,7 @@ defmodule IP.Address do
       ...> |> IP.Address.eui_64?()
       true
   """
-  @spec eui_64?(t) :: true | false
+  @spec eui_64?(t) :: boolean
   def eui_64?(%Address{address: address, version: 6})
   when (address &&& 0x20000fffe000000) == 0x20000fffe000000,
   do: true
@@ -360,7 +369,7 @@ defmodule IP.Address do
       ...> |> IP.Address.eui_64_mac()
       {:ok, "60f8.1dad.d890"}
   """
-  @spec eui_64_mac(t) :: binary
+  @spec eui_64_mac(t) :: {:ok, binary} | {:error, term}
   def eui_64_mac(%Address{address: address, version: 6})
   when (address &&& 0x20000fffe000000) == 0x20000fffe000000
   do
@@ -407,7 +416,7 @@ defmodule IP.Address do
       ...> |> IP.Address.is_6to4?()
       false
   """
-  @spec is_6to4?(t) :: true | false
+  @spec is_6to4?(t) :: boolean
   def is_6to4?(%Address{address: address, version: 6})
   when (address >>> 112) == 0x2002, do: true
 
@@ -446,7 +455,7 @@ defmodule IP.Address do
       ...> |> IP.Address.is_teredo?()
       true
   """
-  @spec is_teredo?(t) :: true | false
+  @spec is_teredo?(t) :: boolean
   def is_teredo?(%Address{address: address, version: 6})
   when (address >>> 96) == 0x20010000, do: true
 
@@ -497,7 +506,7 @@ defmodule IP.Address do
       iex> IP.Address.generate_ula("60:f8:1d:ad:d8:90")
       #IP.Address<fd29:f1ef:86a1::>
   """
-  @spec generate_ula(binary, non_neg_integer, true | false) :: \
+  @spec generate_ula(binary, non_neg_integer, boolean) :: \
     {:ok, t} | {:error, term}
   def generate_ula(mac, subnet_id \\ 0, locally_assigned \\ true) do
     with {:ok, address} <- ULA.generate(mac, subnet_id, locally_assigned),
