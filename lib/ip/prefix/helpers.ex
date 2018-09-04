@@ -5,8 +5,8 @@ defmodule IP.Prefix.Helpers do
 
   @doc false
   def calculate_mask_from_length(length, mask_length) do
-    pad  = mask_length - length - 1
-    mask = n_times_reduce(length, 0, fn (i, mask) -> mask + (1 <<< i) end)
+    pad = mask_length - length - 1
+    mask = n_times_reduce(length, 0, fn i, mask -> mask + (1 <<< i) end)
     mask <<< pad
   end
 
@@ -22,6 +22,7 @@ defmodule IP.Prefix.Helpers do
   end
 
   defp n_times_reduce(0, acc, _fun), do: acc
+
   defp n_times_reduce(n, acc, fun) do
     acc = fun.(n, acc)
     n_times_reduce(n - 1, acc, fun)
@@ -35,15 +36,14 @@ defmodule IP.Prefix.Helpers do
 
   defmacro highest_address(addr, mask, 4) do
     quote do
-      (unquote(addr) &&& unquote(mask)) +
-      (~~~unquote(mask) &&& 0xffffffff)
+      (unquote(addr) &&& unquote(mask)) + (~~~unquote(mask) &&& 0xFFFFFFFF)
     end
   end
 
   defmacro highest_address(addr, mask, 6) do
     quote do
       (unquote(addr) &&& unquote(mask)) +
-      (~~~unquote(mask) &&& 0xffffffffffffffffffffffffffffffff)
+        (~~~unquote(mask) &&& 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
     end
   end
 end

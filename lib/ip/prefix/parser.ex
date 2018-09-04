@@ -1,5 +1,5 @@
 defmodule IP.Prefix.Parser do
-  alias IP.{Prefix, Address}
+  alias IP.{Address, Prefix}
   import IP.Prefix.Helpers
 
   @moduledoc false
@@ -22,10 +22,12 @@ defmodule IP.Prefix.Parser do
       ...> |> inspect()
       "{:ok, #IP.Prefix<2001:db8::/64 DOCUMENTATION>}"
   """
-  @spec parse(binary) :: {:ok, Prefix.t} | {:error, term}
+  @spec parse(binary) :: {:ok, Prefix.t()} | {:error, term}
   def parse(prefix) do
     case parse(prefix, 4) do
-      {:ok, prefix} -> {:ok, prefix}
+      {:ok, prefix} ->
+        {:ok, prefix}
+
       _ ->
         case parse(prefix, 6) do
           {:ok, prefix} -> {:ok, prefix}
@@ -49,12 +51,11 @@ defmodule IP.Prefix.Parser do
       ...> |> inspect()
       "{:ok, #IP.Prefix<2001:db8::/64 DOCUMENTATION>}"
   """
-  @spec parse(binary, Address.version) :: {:ok, Prefix.t} | {:error, term}
+  @spec parse(binary, Address.version()) :: {:ok, Prefix.t()} | {:error, term}
   def parse(prefix, 4 = _version) do
     with {:ok, address, mask} <- ensure_contains_slash(prefix),
-         {:ok, address}       <- Address.from_string(address, 4),
-         {:ok, mask}          <- parse_v4_mask(mask)
-    do
+         {:ok, address} <- Address.from_string(address, 4),
+         {:ok, mask} <- parse_v4_mask(mask) do
       {:ok, Prefix.new(address, mask)}
     else
       _ -> {:error, "Error parsing IPv4 prefix"}
@@ -63,9 +64,8 @@ defmodule IP.Prefix.Parser do
 
   def parse(prefix, 6 = _version) do
     with {:ok, address, mask} <- ensure_contains_slash(prefix),
-         {:ok, address}       <- Address.from_string(address, 6),
-         {:ok, mask}          <- parse_v6_mask(mask)
-    do
+         {:ok, address} <- Address.from_string(address, 6),
+         {:ok, mask} <- parse_v6_mask(mask) do
       {:ok, Prefix.new(address, mask)}
     else
       _ -> {:error, "Error parsing IPv6 prefix"}
@@ -82,10 +82,13 @@ defmodule IP.Prefix.Parser do
   defp parse_v4_mask(mask) do
     case Address.from_string(mask, 4) do
       {:ok, address} ->
-        mask = address
-        |> Address.to_integer()
-        |> calculate_length_from_mask()
+        mask =
+          address
+          |> Address.to_integer()
+          |> calculate_length_from_mask()
+
         {:ok, mask}
+
       _ ->
         {:ok, String.to_integer(mask)}
     end

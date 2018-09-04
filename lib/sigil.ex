@@ -1,5 +1,5 @@
 defmodule IP.Sigil do
-  alias IP.{Prefix, Address}
+  alias IP.{Address, Prefix}
   alias IP.Sigil.InvalidValue
 
   @moduledoc """
@@ -67,36 +67,57 @@ defmodule IP.Sigil do
       iex> IP.Sigil.sigil_i("2001:db8::/32", 's')
       #IP.Prefix<2001:db8::/32 DOCUMENTATION>
   """
-  @spec sigil_i(binary, [non_neg_integer]) :: Prefix.t | Address.t
+  @spec sigil_i(binary, [non_neg_integer]) :: Prefix.t() | Address.t()
   def sigil_i(value, '' = _options) do
     case Prefix.from_string(value) do
-      {:ok, prefix} -> prefix
+      {:ok, prefix} ->
+        prefix
+
       {:error, _} ->
         case Address.from_string(value) do
-          {:ok, address} -> address
-          {:error, _} -> raise(InvalidValue, message: "Unable to parse #{inspect value} as an IP address or prefix.")
+          {:ok, address} ->
+            address
+
+          {:error, _} ->
+            raise(InvalidValue,
+              message: "Unable to parse #{inspect(value)} as an IP address or prefix."
+            )
         end
     end
   end
 
   def sigil_i(value, 'f' = _options) do
     case Prefix.from_string(value, 4) do
-      {:ok, prefix} -> prefix
+      {:ok, prefix} ->
+        prefix
+
       {:error, _} ->
         case Address.from_string(value, 4) do
-          {:ok, address} -> address
-          {:error, _} -> raise(InvalidValue, message: "Unable to parse #{inspect value} as an IPv4 address or prefix.")
+          {:ok, address} ->
+            address
+
+          {:error, _} ->
+            raise(InvalidValue,
+              message: "Unable to parse #{inspect(value)} as an IPv4 address or prefix."
+            )
         end
     end
   end
 
   def sigil_i(value, 's' = _options) do
     case Prefix.from_string(value, 6) do
-      {:ok, prefix} -> prefix
+      {:ok, prefix} ->
+        prefix
+
       {:error, _} ->
         case Address.from_string(value, 6) do
-          {:ok, address} -> address
-          {:error, _} -> raise(InvalidValue, message: "Unable to parse #{inspect value} as an IPv6 address or prefix.")
+          {:ok, address} ->
+            address
+
+          {:error, _} ->
+            raise(InvalidValue,
+              message: "Unable to parse #{inspect(value)} as an IPv6 address or prefix."
+            )
         end
     end
   end

@@ -1,5 +1,6 @@
 defimpl String.Chars, for: IP.Prefix do
   alias IP.Prefix
+
   @moduledoc """
   Implements `String.Chars` for `IP.Prefix`.
   """
@@ -15,7 +16,7 @@ defimpl String.Chars, for: IP.Prefix do
       "192.0.2.1/32"
   """
   def to_string(%Prefix{} = prefix) do
-    length  = Prefix.length(prefix)
+    length = Prefix.length(prefix)
     address = Prefix.first(prefix)
     "#{address}/#{length}"
   end

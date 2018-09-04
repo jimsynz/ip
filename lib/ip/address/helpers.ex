@@ -6,7 +6,7 @@ defmodule IP.Address.Helpers do
   """
   defmacro valid_ipv4_integer?(n) do
     quote do
-      is_integer(unquote(n)) and unquote(n) >= 0 and unquote(n) <= 0xffffffff
+      is_integer(unquote(n)) and unquote(n) >= 0 and unquote(n) <= 0xFFFFFFFF
     end
   end
 
@@ -15,25 +15,24 @@ defmodule IP.Address.Helpers do
   """
   defmacro valid_ipv6_integer?(n) do
     quote do
-      is_integer(unquote(n))
-      and unquote(n) >= 0
-      and unquote(n) <= 0xffffffffffffffffffffffffffffffff
+      is_integer(unquote(n)) and unquote(n) >= 0 and
+        unquote(n) <= 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
     end
   end
 
   @doc """
   Guard clause macro for "4 or 6"
   """
-  defmacro valid_ip_version?(4), do: quote do: true
-  defmacro valid_ip_version?(6), do: quote do: true
-  defmacro valid_ip_version?(_), do: quote do: false
+  defmacro valid_ip_version?(4), do: quote(do: true)
+  defmacro valid_ip_version?(6), do: quote(do: true)
+  defmacro valid_ip_version?(_), do: quote(do: false)
 
   @doc """
   Guard clause macro for "between 0 and 0xff"
   """
   defmacro valid_byte?(n) do
     quote do
-      is_integer(unquote(n)) and unquote(n) >= 0 and unquote(n) <= 0xff
+      is_integer(unquote(n)) and unquote(n) >= 0 and unquote(n) <= 0xFF
     end
   end
 end
