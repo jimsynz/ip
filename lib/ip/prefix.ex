@@ -1,6 +1,6 @@
 defmodule IP.Prefix do
-  alias IP.{Prefix, Address}
-  alias IP.Prefix.{Parser, InvalidPrefix, Helpers, EUI64}
+  alias IP.{Address, Prefix}
+  alias IP.Prefix.{EUI64, Helpers, InvalidPrefix, Parser}
   defstruct ~w(address mask)a
   use Bitwise
   import Helpers
@@ -9,8 +9,8 @@ defmodule IP.Prefix do
   Defines an IP prefix, otherwise known as a subnet.
   """
 
-  @ipv4_mask 0xffffffff
-  @ipv6_mask 0xffffffffffffffffffffffffffffffff
+  @ipv4_mask 0xFFFFFFFF
+  @ipv6_mask 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 
   @typedoc "Valid IPv4 prefix lengths from 0 to 32."
   @type ipv4_prefix_length :: 0..32
@@ -22,7 +22,7 @@ defmodule IP.Prefix do
   @type prefix_length :: ipv4_prefix_length | ipv6_prefix_length
 
   @typedoc "The main prefix type, contains an address and a mask value."
-  @type t :: %Prefix{address: Address.t, mask: Address.ip}
+  @type t :: %Prefix{address: Address.t(), mask: Address.ip()}
 
   @doc """
   Create an IP prefix from an `IP.Address` and `length`.
@@ -35,7 +35,7 @@ defmodule IP.Prefix do
       iex> IP.Prefix.new(~i(2001:db8::1), 64)
       #IP.Prefix<2001:db8::/64 DOCUMENTATION>
   """
-  @spec new(Address.t, prefix_length) :: t
+  @spec new(Address.t(), prefix_length) :: t
   def new(%Address{address: address, version: 4}, length) when length >= 0 and length <= 32 do
     mask = calculate_mask_from_length(length, 32)
     %Prefix{address: Address.from_integer!(address, 4), mask: mask}
@@ -90,7 +90,7 @@ defmodule IP.Prefix do
       ...> |> IP.Prefix.from_string(4)
       {:error, "Error parsing IPv4 prefix"}
   """
-  @spec from_string(binary, Address.version) :: {:ok, t} | {:error, term}
+  @spec from_string(binary, Address.version()) :: {:ok, t} | {:error, term}
   def from_string(prefix, version), do: Parser.parse(prefix, version)
 
   @doc """
@@ -133,7 +133,7 @@ defmodule IP.Prefix do
       ...> |> IP.Prefix.from_string!(4)
       #IP.Prefix<192.0.2.0/24 DOCUMENTATION>
   """
-  @spec from_string!(binary, Address.version) :: t
+  @spec from_string!(binary, Address.version()) :: t
   def from_string!(prefix, version) do
     case from_string(prefix, version) do
       {:ok, prefix} -> prefix
@@ -164,14 +164,12 @@ defmodule IP.Prefix do
   """
   @spec length(t, prefix_length) :: t
   def length(%Prefix{address: %Address{version: 4}} = prefix, length)
-  when is_number(length) and length >= 0 and length <= 32
-  do
+      when is_number(length) and length >= 0 and length <= 32 do
     %{prefix | mask: calculate_mask_from_length(length, 32)}
   end
 
   def length(%Prefix{address: %Address{version: 6}} = prefix, length)
-  when is_number(length) and length >= 0 and length <= 128
-  do
+      when is_number(length) and length >= 0 and length <= 128 do
     %{prefix | mask: calculate_mask_from_length(length, 128)}
   end
 
@@ -184,7 +182,7 @@ defmodule IP.Prefix do
       ...> |> IP.Prefix.mask()
       0b11111111111111111111111100000000
   """
-  @spec mask(t) :: Address.ip
+  @spec mask(t) :: Address.ip()
   def mask(%Prefix{mask: mask}), do: mask
 
   @doc """
@@ -196,7 +194,7 @@ defmodule IP.Prefix do
       ...> |> IP.Prefix.subnet_mask()
       #IP.Address<255.255.255.0 RESERVED>
   """
-  @spec subnet_mask(t) :: Address.t
+  @spec subnet_mask(t) :: Address.t()
   def subnet_mask(%Prefix{mask: mask, address: %Address{version: 4}}) do
     mask
     |> Address.from_integer!(4)
@@ -211,7 +209,7 @@ defmodule IP.Prefix do
       ...> |> IP.Prefix.wildcard_mask()
       #IP.Address<0.0.0.255 CURRENT NETWORK>
   """
-  @spec wildcard_mask(t) :: Address.t
+  @spec wildcard_mask(t) :: Address.t()
   def wildcard_mask(%Prefix{mask: mask, address: %Address{version: 4}}) do
     mask
     |> bnot()
@@ -232,7 +230,7 @@ defmodule IP.Prefix do
       ...> |> IP.Prefix.first()
       #IP.Address<2001:db8:: DOCUMENTATION>
   """
-  @spec first(t) :: Address.t
+  @spec first(t) :: Address.t()
   def first(%Prefix{address: %Address{address: address, version: version}, mask: mask}) do
     Address.from_integer!(lowest_address(address, mask), version)
   end
@@ -250,7 +248,7 @@ defmodule IP.Prefix do
       ...> |> IP.Prefix.last()
       #IP.Address<2001:db8::ffff:ffff:ffff:ffff DOCUMENTATION>
   """
-  @spec last(t) :: Address.t
+  @spec last(t) :: Address.t()
   def last(%Prefix{address: %Address{address: address, version: 4}, mask: mask}) do
     Address.from_integer!(highest_address(address, mask, 4), 4)
   end
@@ -287,20 +285,20 @@ defmodule IP.Prefix do
       true
 
   """
-  @spec contains_prefix?(t, Address.t) :: boolean
-  def contains_address?(%Prefix{address: %Address{address: addr0, version: 4}, mask: mask} = _prefix,
-                        %Address{address: addr1, version: 4} = _address)
-  when lowest_address(addr0, mask) <= addr1
-   and highest_address(addr0, mask, 4) >= addr1
-  do
+  @spec contains_prefix?(t, Address.t()) :: boolean
+  def contains_address?(
+        %Prefix{address: %Address{address: addr0, version: 4}, mask: mask} = _prefix,
+        %Address{address: addr1, version: 4} = _address
+      )
+      when lowest_address(addr0, mask) <= addr1 and highest_address(addr0, mask, 4) >= addr1 do
     true
   end
 
-  def contains_address?(%Prefix{address: %Address{address: addr0, version: 6}, mask: mask} = _prefix,
-                        %Address{address: addr1, version: 6} = _address)
-  when lowest_address(addr0, mask) <= addr1
-   and highest_address(addr0, mask, 6) >= addr1
-  do
+  def contains_address?(
+        %Prefix{address: %Address{address: addr0, version: 6}, mask: mask} = _prefix,
+        %Address{address: addr1, version: 6} = _address
+      )
+      when lowest_address(addr0, mask) <= addr1 and highest_address(addr0, mask, 6) >= addr1 do
     true
   end
 
@@ -334,19 +332,21 @@ defmodule IP.Prefix do
 
   """
   @spec contains_prefix?(t, t) :: boolean
-  def contains_prefix?(%Prefix{address: %Address{address: oaddr, version: 4}, mask: omask} = _outside,
-                       %Prefix{address: %Address{address: iaddr, version: 4}, mask: imask} = _inside)
-  when lowest_address(oaddr, omask) <= lowest_address(iaddr, imask)
-   and highest_address(oaddr, omask, 4) >= highest_address(iaddr, imask, 4)
-  do
+  def contains_prefix?(
+        %Prefix{address: %Address{address: oaddr, version: 4}, mask: omask} = _outside,
+        %Prefix{address: %Address{address: iaddr, version: 4}, mask: imask} = _inside
+      )
+      when lowest_address(oaddr, omask) <= lowest_address(iaddr, imask) and
+             highest_address(oaddr, omask, 4) >= highest_address(iaddr, imask, 4) do
     true
   end
 
-  def contains_prefix?(%Prefix{address: %Address{address: oaddr, version: 6}, mask: omask} = _outside,
-                       %Prefix{address: %Address{address: iaddr, version: 6}, mask: imask} = _inside)
-  when lowest_address(oaddr, omask) <= lowest_address(iaddr, imask)
-   and highest_address(oaddr, omask, 6) >= highest_address(iaddr, imask, 6)
-  do
+  def contains_prefix?(
+        %Prefix{address: %Address{address: oaddr, version: 6}, mask: omask} = _outside,
+        %Prefix{address: %Address{address: iaddr, version: 6}, mask: imask} = _inside
+      )
+      when lowest_address(oaddr, omask) <= lowest_address(iaddr, imask) and
+             highest_address(oaddr, omask, 6) >= highest_address(iaddr, imask, 6) do
     true
   end
 
@@ -364,16 +364,16 @@ defmodule IP.Prefix do
       ...> |> inspect()
       "{:ok, #IP.Address<2001:db8::62f8:1dff:fead:d890 DOCUMENTATION>}"
   """
-  @spec eui_64(t, binary) :: {:ok, Address.t} | {:error, term}
-  def eui_64(%Prefix{address: %Address{version: 6},
-                     mask: 0xffffffffffffffff0000000000000000} = prefix, mac)
-  do
+  @spec eui_64(t, binary) :: {:ok, Address.t()} | {:error, term}
+  def eui_64(
+        %Prefix{address: %Address{version: 6}, mask: 0xFFFFFFFFFFFFFFFF0000000000000000} = prefix,
+        mac
+      ) do
     with {:ok, eui_portion} <- EUI64.eui_portion(mac),
-         address            <- Prefix.first(prefix),
-         address            <- Address.to_integer(address),
-         address            <- address + eui_portion,
-         {:ok, address}     <- Address.from_integer(address, 6)
-    do
+         address <- Prefix.first(prefix),
+         address <- Address.to_integer(address),
+         address <- address + eui_portion,
+         {:ok, address} <- Address.from_integer(address, 6) do
       {:ok, address}
     end
   end
@@ -389,7 +389,7 @@ defmodule IP.Prefix do
       ...> |> IP.Prefix.eui_64!("60:f8:1d:ad:d8:90")
       #IP.Address<2001:db8::62f8:1dff:fead:d890 DOCUMENTATION>
   """
-  @spec eui_64!(t, binary) :: Address.t
+  @spec eui_64!(t, binary) :: Address.t()
   def eui_64!(prefix, mac) do
     case eui_64(prefix, mac) do
       {:ok, address} -> address
@@ -413,13 +413,13 @@ defmodule IP.Prefix do
   @spec space(t) :: non_neg_integer
   def space(%Prefix{address: %Address{address: address, version: 4}, mask: mask}) do
     first = address &&& mask
-    last  = first + (~~~mask &&& @ipv4_mask)
+    last = first + (~~~mask &&& @ipv4_mask)
     last - first + 1
   end
 
   def space(%Prefix{address: %Address{address: address, version: 6}, mask: mask}) do
     first = address &&& mask
-    last  = first + (~~~mask &&& @ipv6_mask)
+    last = first + (~~~mask &&& @ipv6_mask)
     last - first + 1
   end
 
@@ -438,8 +438,10 @@ defmodule IP.Prefix do
   """
   @spec usable(t) :: non_neg_integer
   def usable(%Prefix{address: %Address{version: 4}} = prefix) do
-    space = prefix
+    space =
+      prefix
       |> Prefix.space()
+
     space - 2
   end
 

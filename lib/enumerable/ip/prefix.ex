@@ -20,7 +20,7 @@ defimpl Enumerable, for: IP.Prefix do
       ...> |> Enum.count()
       128
   """
-  @spec count(Prefix.t) :: {:ok, non_neg_integer} | {:error, module}
+  @spec count(Prefix.t()) :: {:ok, non_neg_integer} | {:error, module}
   def count(prefix), do: {:ok, Prefix.space(prefix)}
 
   @doc """
@@ -32,7 +32,7 @@ defimpl Enumerable, for: IP.Prefix do
       ...> |> Enum.member?(~i(192.0.2.250))
       true
   """
-  @spec member?(Prefix.t, Address.t) :: {:ok, boolean} | {:error, module}
+  @spec member?(Prefix.t(), Address.t()) :: {:ok, boolean} | {:error, module}
   def member?(prefix, %Address{} = address), do: {:ok, Prefix.contains_address?(prefix, address)}
 
   @doc """
@@ -45,26 +45,35 @@ defimpl Enumerable, for: IP.Prefix do
       ...> |> Enum.map(fn a -> IP.Address.to_string(a) end)
       ["192.0.2.130", "192.0.2.132", "192.0.2.134"]
   """
-  @spec reduce(Prefix.t, Enumerable.acc, Enumerable.reducer) :: \
-    Enumerable.result
-  def reduce(_,                   {:halt, acc},    _fun), do: {:halted, acc}
-  def reduce({prefix, pos, last}, {:suspend, acc}, fun),  do: {:suspended, acc, &reduce({prefix, pos, last}, &1, fun)}
+  @spec reduce(Prefix.t(), Enumerable.acc(), Enumerable.reducer()) :: Enumerable.result()
+  def reduce(_, {:halt, acc}, _fun), do: {:halted, acc}
+
+  def reduce({prefix, pos, last}, {:suspend, acc}, fun),
+    do: {:suspended, acc, &reduce({prefix, pos, last}, &1, fun)}
 
   def reduce(%Prefix{} = prefix, {:cont, acc}, fun) do
-    first = prefix
+    first =
+      prefix
       |> Prefix.first()
       |> Address.to_integer()
 
-    last = prefix
+    last =
+      prefix
       |> Prefix.last()
       |> Address.to_integer()
 
     reduce({prefix, first, last}, {:cont, acc}, fun)
   end
 
-  def reduce({%Prefix{address: %Address{version: version}} = prefix, pos, last}, {:cont, acc}, fun) do
+  def reduce(
+        {%Prefix{address: %Address{version: version}} = prefix, pos, last},
+        {:cont, acc},
+        fun
+      ) do
     case pos do
-      ^last -> {:done, acc}
+      ^last ->
+        {:done, acc}
+
       pos ->
         pos = pos + 1
         next = Address.from_integer!(pos, version)

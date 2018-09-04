@@ -4,14 +4,14 @@ defmodule IP.Mixfile do
   @description """
   Represtations and tools for IP addresses and networks.
   """
-  @version "1.0.0"
+  @version "1.1.0"
 
   def project do
     [
       app: :ip,
       version: @version,
       elixir: "~> 1.5",
-      start_permanent: Mix.env == :prod,
+      start_permanent: Mix.env() == :prod,
       package: package(),
       deps: deps(),
       description: @description
@@ -20,8 +20,8 @@ defmodule IP.Mixfile do
 
   def package do
     [
-      maintainers: [ "James Harton <james@automat.nz>" ],
-      licenses: [ "MIT" ],
+      maintainers: ["James Harton <james@automat.nz>"],
+      licenses: ["MIT"],
       links: %{
         "Source" => "https://gitlab.com/jimsy/ip"
       }
@@ -40,8 +40,8 @@ defmodule IP.Mixfile do
     [
       {:ex_doc, ">= 0.0.0", only: :dev},
       {:earmark, ">= 0.0.0", only: :dev},
-      {:credo, "~> 0.6", only: ~w(dev test)a, runtime: false},
-      {:inch_ex, "~> 0.5", only: ~w(dev test)a, runtime: false},
+      {:credo, "~> 0.10", only: ~w(dev test)a, runtime: false},
+      {:inch_ex, "~> 1.0", only: ~w(dev test)a, runtime: false},
       {:dialyxir, "~> 0.5", only: ~w(dev test)a, runtime: false}
     ]
   end
