@@ -13,7 +13,7 @@ by adding `ip` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:ip, "~> 0.2.0"}
+    {:ip, "~> 1.0.0"}
   ]
 end
 ```
