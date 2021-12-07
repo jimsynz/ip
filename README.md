@@ -1,6 +1,6 @@
 # IP
 
-[![pipeline status](https://gitlab.com/jimsy/ip/badges/master/pipeline.svg)](https://gitlab.com/jimsy/ip/commits/master)
+[![pipeline status](https://gitlab.com/jimsy/ip/badges/main/pipeline.svg)](https://gitlab.com/jimsy/ip/commits/main)
 [![Hex.pm](https://img.shields.io/hexpm/v/ip.svg)](https://hex.pm/packages/ip)
 
 IP, IP, Ooray! Simple IP Address representations.
