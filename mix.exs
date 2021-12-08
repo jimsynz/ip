@@ -40,8 +40,7 @@ defmodule IP.Mixfile do
     [
       {:ex_doc, ">= 0.0.0", only: :dev},
       {:earmark, ">= 0.0.0", only: :dev},
-      {:credo, "~> 1.0", only: ~w(dev test)a, runtime: false},
-      {:dialyxir, "~> 1.0", only: ~w(dev test)a, runtime: false}
+      {:credo, "~> 1.0", only: ~w(dev test)a, runtime: false}
     ]
   end
 end
