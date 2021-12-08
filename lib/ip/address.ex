@@ -392,7 +392,7 @@ defmodule IP.Address do
     mac = address &&& 0xFFFFFFFFFFFFFFFF
     head = mac >>> 40
     tail = mac &&& 0xFFFFFF
-    mac = ((head <<< 24) + tail) ^^^ 0x20000000000
+    mac = Bitwise.bxor((head <<< 24) + tail, 0x20000000000)
 
     <<a::binary-size(4), b::binary-size(4), c::binary-size(4)>> =
       mac
@@ -531,9 +531,9 @@ defmodule IP.Address do
   """
   @spec generate_ula(binary, non_neg_integer, boolean) :: {:ok, t} | {:error, term}
   def generate_ula(mac, subnet_id \\ 0, locally_assigned \\ true) do
-    with {:ok, address} <- ULA.generate(mac, subnet_id, locally_assigned),
-         {:ok, address} <- from_integer(address, 6) do
-      {:ok, address}
+    case ULA.generate(mac, subnet_id, locally_assigned) do
+      {:ok, address} -> from_integer(address, 6)
+      {:error, reason} -> {:error, reason}
     end
   end
 

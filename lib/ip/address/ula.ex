@@ -16,14 +16,8 @@ defmodule IP.Address.ULA do
          {:ok, ntp_time} <- ntp_time(now),
          {:ok, eui} <- EUI64.eui_portion(mac),
          {:ok, digest} <- generate_digest(ntp_time, eui),
-         {:ok, global_id} <- last_40_bits_of_digest(digest),
-         {:ok, prefix} <-
-           generate_address(
-             locally_assigned,
-             subnet_id,
-             global_id
-           ) do
-      {:ok, prefix}
+         {:ok, global_id} <- last_40_bits_of_digest(digest) do
+      generate_address(locally_assigned, subnet_id, global_id)
     end
   end
 

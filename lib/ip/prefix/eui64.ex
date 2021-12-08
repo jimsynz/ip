@@ -36,7 +36,7 @@ defmodule IP.Prefix.EUI64 do
 
   def generate_eui(head, tail) do
     address = (head <<< 40) + (0xFFFE <<< 24) + tail
-    address = address ^^^ 0x0200000000000000
+    address = Bitwise.bxor(address, 0x0200000000000000)
     {:ok, address}
   end
 
