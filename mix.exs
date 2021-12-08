@@ -38,9 +38,10 @@ defmodule IP.Mixfile do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:ex_doc, ">= 0.0.0", only: :dev},
-      {:earmark, ">= 0.0.0", only: :dev},
-      {:credo, "~> 1.0", only: ~w(dev test)a, runtime: false}
+      {:credo, "~> 1.0", only: ~w[dev test]a, runtime: false},
+      {:earmark, ">= 0.0.0", only: ~w[dev test]a},
+      {:ex_doc, ">= 0.0.0", only: ~w[dev test]a},
+      {:git_ops, "~> 2.3", only: ~w[dev test]a, runtime: false}
     ]
   end
 end
