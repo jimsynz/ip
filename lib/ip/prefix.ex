@@ -372,9 +372,8 @@ defmodule IP.Prefix do
     with {:ok, eui_portion} <- EUI64.eui_portion(mac),
          address <- Prefix.first(prefix),
          address <- Address.to_integer(address),
-         address <- address + eui_portion,
-         {:ok, address} <- Address.from_integer(address, 6) do
-      {:ok, address}
+         address <- address + eui_portion do
+      Address.from_integer(address, 6)
     end
   end
 
