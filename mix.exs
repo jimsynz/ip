@@ -39,7 +39,7 @@ defmodule IP.Mixfile do
   defp deps do
     [
       {:credo, "~> 1.6", only: ~w[dev test]a, runtime: false},
-      {:earmark, ">= 0.2.1", only: ~w[dev test]a},
+      {:earmark, ">= 1.4.19", only: ~w[dev test]a},
       {:ex_doc, ">= 0.26.0", only: ~w[dev test]a},
       {:git_ops, "~> 2.4", only: ~w[dev test]a, runtime: false}
     ]
