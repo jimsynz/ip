@@ -35,4 +35,13 @@ defmodule IP.Address.Helpers do
       is_integer(unquote(n)) and unquote(n) >= 0 and unquote(n) <= 0xFF
     end
   end
+
+  @doc """
+  Guard clause for "between 0 and 0xffff"
+  """
+  defmacro valid_quartet?(n) do
+    quote do
+      is_integer(unquote(n)) and unquote(n) >= 0 and unquote(n) <= 0xFFFF
+    end
+  end
 end

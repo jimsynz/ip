@@ -244,6 +244,52 @@ defmodule IP.Address do
   end
 
   @doc """
+  Convert an Erlang-style tuple of bytes to an address.
+
+  ## Examples
+
+      iex> {192, 0, 2, 1}
+      ...> |> IP.Address.from_tuple()
+      {:ok, %IP.Address{address: 3221225985, version: 4}}
+
+      iex> {8193, 3512, 0, 0, 0, 0, 0, 1}
+      ...> |> IP.Address.from_tuple()
+      {:ok, %IP.Address{address: 42540766411282592856903984951653826561, version: 6}}
+  """
+  @spec from_tuple(:socket.in_addr() | :socket.in6_addr()) :: {:ok, t} | {:error, term}
+  def from_tuple({a, b, c, d})
+      when valid_byte?(a) and valid_byte?(b) and valid_byte?(c) and valid_byte?(d),
+      do: {:ok, %Address{version: 4, address: from_bytes([a, b, c, d])}}
+
+  def from_tuple({a, b, c, d, e, f, g, h})
+      when valid_quartet?(a) and valid_quartet?(b) and valid_quartet?(c) and valid_quartet?(d) and
+             valid_quartet?(e) and valid_quartet?(f) and valid_quartet?(g) and valid_quartet?(h),
+      do: {:ok, %Address{version: 6, address: from_bytes([a, b, c, d, e, f, g, h])}}
+
+  def from_tuple(_), do: {:error, "Invalid address"}
+
+  @doc """
+  Convert an Erlang-style tuple of bytes to an address.
+
+  ## Examples
+
+      iex> {192, 0, 2, 1}
+      ...> |> IP.Address.from_tuple!()
+      %IP.Address{address: 3221225985, version: 4}
+
+      iex> {8193, 3512, 0, 0, 0, 0, 0, 1}
+      ...> |> IP.Address.from_tuple!()
+      %IP.Address{address: 42540766411282592856903984951653826561, version: 6}
+  """
+  @spec from_tuple!(:socket.in_addr() | :socket.in6_addr()) :: t | no_return
+  def from_tuple!(tuple) do
+    case from_tuple(tuple) do
+      {:ok, address} -> address
+      {:error, msg} -> raise(InvalidAddress, msg)
+    end
+  end
+
+  @doc """
   Convert an `address` into a string.
 
   ## Examples
