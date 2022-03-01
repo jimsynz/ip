@@ -4,7 +4,7 @@ defmodule IP.Mixfile do
   @description """
   Represtations and tools for IP addresses and networks.
   """
-  @version "1.1.1"
+  @version "1.2.0"
 
   def project do
     [
