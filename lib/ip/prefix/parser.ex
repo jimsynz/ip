@@ -1,6 +1,7 @@
 defmodule IP.Prefix.Parser do
   alias IP.{Address, Prefix}
   import IP.Prefix.Helpers
+  use Bitwise
 
   @moduledoc false
 
@@ -79,18 +80,30 @@ defmodule IP.Prefix.Parser do
     end
   end
 
-  defp parse_v4_mask(mask) do
-    case Address.from_string(mask, 4) do
-      {:ok, address} ->
-        mask =
-          address
-          |> Address.to_integer()
-          |> calculate_length_from_mask()
+  defguardp is_int_to(i, high) when is_integer(i) and i >= 0 and i <= high
 
-        {:ok, mask}
+  defp parse_v4_mask(mask) do
+    mask
+    |> String.split(".")
+    |> Enum.map(&String.to_integer/1)
+    |> case do
+      [length] when is_int_to(length, 32) ->
+        {:ok, length}
+
+      [255, 255, 255, quad] when is_int_to(quad, 255) ->
+        {:ok, calculate_length_from_mask(4_294_967_040 + quad)}
+
+      [255, 255, quad, 0] when is_int_to(quad, 255) ->
+        {:ok, calculate_length_from_mask(4_294_901_760 + (quad <<< 8))}
+
+      [255, quad, 0, 0] when is_int_to(quad, 255) ->
+        {:ok, calculate_length_from_mask(4_278_190_080 + (quad <<< 16))}
+
+      [quad, 0, 0, 0] when is_int_to(quad, 255) ->
+        {:ok, calculate_length_from_mask(quad <<< 24)}
 
       _ ->
-        {:ok, String.to_integer(mask)}
+        {:error, "Unable to parse IPv4 mask"}
     end
   rescue
     ArgumentError -> {:error, "Unable to parse IPv4 mask"}
