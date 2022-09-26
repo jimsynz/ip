@@ -1,5 +1,5 @@
 defmodule IP.Prefix.EUI64 do
-  use Bitwise
+  import Bitwise
 
   @moduledoc false
 

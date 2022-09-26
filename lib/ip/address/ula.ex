@@ -1,7 +1,7 @@
 defmodule IP.Address.ULA do
   alias IP.Address
   alias IP.Prefix.EUI64
-  use Bitwise
+  import Bitwise
 
   @moduledoc false
 

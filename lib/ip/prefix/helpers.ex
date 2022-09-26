@@ -1,5 +1,5 @@
 defmodule IP.Prefix.Helpers do
-  use Bitwise
+  import Bitwise
 
   @moduledoc false
 
@@ -36,14 +36,14 @@ defmodule IP.Prefix.Helpers do
 
   defmacro highest_address(addr, mask, 4) do
     quote do
-      (unquote(addr) &&& unquote(mask)) + (~~~unquote(mask) &&& 0xFFFFFFFF)
+      (unquote(addr) &&& unquote(mask)) + (bnot(unquote(mask)) &&& 0xFFFFFFFF)
     end
   end
 
   defmacro highest_address(addr, mask, 6) do
     quote do
       (unquote(addr) &&& unquote(mask)) +
-        (~~~unquote(mask) &&& 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
+        (bnot(unquote(mask)) &&& 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
     end
   end
 end

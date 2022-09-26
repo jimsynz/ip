@@ -2,7 +2,7 @@ defmodule IP.Prefix do
   alias IP.{Address, Prefix}
   alias IP.Prefix.{EUI64, Helpers, InvalidPrefix, Parser}
   defstruct ~w(address mask)a
-  use Bitwise
+  import Bitwise
   import Helpers
 
   @moduledoc """
@@ -412,13 +412,13 @@ defmodule IP.Prefix do
   @spec space(t) :: non_neg_integer
   def space(%Prefix{address: %Address{address: address, version: 4}, mask: mask}) do
     first = address &&& mask
-    last = first + (~~~mask &&& @ipv4_mask)
+    last = first + (bnot(mask) &&& @ipv4_mask)
     last - first + 1
   end
 
   def space(%Prefix{address: %Address{address: address, version: 6}, mask: mask}) do
     first = address &&& mask
-    last = first + (~~~mask &&& @ipv6_mask)
+    last = first + (bnot(mask) &&& @ipv6_mask)
     last - first + 1
   end
 

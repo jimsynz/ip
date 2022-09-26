@@ -1,6 +1,5 @@
 defimpl Enumerable, for: IP.Prefix do
   alias IP.{Prefix, Address}
-  use Bitwise
 
   @moduledoc """
   Implements `Enumerable` for `IP.Prefix`, allowing consumers to iterate

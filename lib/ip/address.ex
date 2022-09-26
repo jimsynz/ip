@@ -3,8 +3,8 @@ defmodule IP.Address do
   alias IP.Address.{Helpers, InvalidAddress, ULA}
   alias IP.Prefix
   defstruct ~w(address version)a
+  import Bitwise
   import Helpers
-  use Bitwise
 
   @moduledoc """
   Simple representations of IP Addresses.

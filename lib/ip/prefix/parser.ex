@@ -1,7 +1,7 @@
 defmodule IP.Prefix.Parser do
   alias IP.{Address, Prefix}
+  import Bitwise
   import IP.Prefix.Helpers
-  use Bitwise
 
   @moduledoc false
 
