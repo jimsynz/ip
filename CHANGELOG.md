@@ -5,6 +5,15 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## [v1.2.3](https://gitlab.com/***PROJECT_PATH***/compare/v1.2.2...v1.2.3) (2022-10-03)
+
+
+
+
+### Improvements:
+
+* Add :crypto to extra_applications
+
 ## [v1.2.2](https://gitlab.com/***PROJECT_PATH***/compare/v1.2.1...v1.2.2) (2022-09-27)
 
 
