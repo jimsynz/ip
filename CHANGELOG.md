@@ -5,7 +5,7 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
-## [v1.2.3](https://gitlab.com/***PROJECT_PATH***/compare/v1.2.2...v1.2.3) (2022-10-03)
+## [v1.2.3](https://gitlab.com/jimsy/ip/compare/v1.2.2...v1.2.3) (2022-10-03)
 
 
 
@@ -14,7 +14,7 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 * Add :crypto to extra_applications
 
-## [v1.2.2](https://gitlab.com/***PROJECT_PATH***/compare/v1.2.1...v1.2.2) (2022-09-27)
+## [v1.2.2](https://gitlab.com/jimsy/ip/compare/v1.2.1...v1.2.2) (2022-09-27)
 
 
 
@@ -23,7 +23,7 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 * Update Bitwise use, libs
 
-## [v1.2.1](https://gitlab.com/***PROJECT_PATH***/compare/v1.2.0...v1.2.1) (2022-09-22)
+## [v1.2.1](https://gitlab.com/jimsy/ip/compare/v1.2.0...v1.2.1) (2022-09-22)
 
 
 
@@ -32,7 +32,7 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 * correctly validate IPv4 netmasks
 
-## [v1.2.0](https://gitlab.com/***PROJECT_PATH***/compare/v1.1.1...v1.2.0) (2022-03-01)
+## [v1.2.0](https://gitlab.com/jimsy/ip/compare/v1.1.1...v1.2.0) (2022-03-01)
 
 
 
@@ -41,7 +41,7 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 * add `Address.from_tuple/1` and `Address.from_tuple!/1`
 
-## [v1.1.1](https://gitlab.com/***PROJECT_PATH***/compare/v1.1.1...v1.1.1) (2021-12-08)
+## [v1.1.1](https://gitlab.com/jimsy/ip/compare/v1.1.1...v1.1.1) (2021-12-08)
 
 
 
