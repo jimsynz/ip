@@ -14,7 +14,7 @@ by adding `ip` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:ip, "~> 1.2.3"}
+    {:ip, "~> 2.0.0"}
   ]
 end
 ```

@@ -5,6 +5,13 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## [v2.0.0](https://gitlab.com/jimsy/ip/compare/v1.2.3...v2.0.0) (2023-01-16)
+### Breaking Changes:
+
+* Relicense to HL3-FULL.
+
+
+
 ## [v1.2.3](https://gitlab.com/jimsy/ip/compare/v1.2.2...v1.2.3) (2022-10-03)
 
 
