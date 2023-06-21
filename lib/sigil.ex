@@ -68,7 +68,7 @@ defmodule IP.Sigil do
       #IP.Prefix<2001:db8::/32 DOCUMENTATION>
   """
   @spec sigil_i(binary, [non_neg_integer]) :: Prefix.t() | Address.t()
-  def sigil_i(value, '' = _options) do
+  def sigil_i(value, ~c"" = _options) do
     case Prefix.from_string(value) do
       {:ok, prefix} ->
         prefix
@@ -86,7 +86,7 @@ defmodule IP.Sigil do
     end
   end
 
-  def sigil_i(value, 'f' = _options) do
+  def sigil_i(value, ~c"f" = _options) do
     case Prefix.from_string(value, 4) do
       {:ok, prefix} ->
         prefix
@@ -104,7 +104,7 @@ defmodule IP.Sigil do
     end
   end
 
-  def sigil_i(value, 's' = _options) do
+  def sigil_i(value, ~c"s" = _options) do
     case Prefix.from_string(value, 6) do
       {:ok, prefix} ->
         prefix
