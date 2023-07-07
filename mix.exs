@@ -40,7 +40,7 @@ defmodule IP.Mixfile do
     [
       {:credo, "~> 1.6", only: ~w[dev test]a, runtime: false},
       {:earmark, "~> 1.4", only: ~w[dev test]a},
-      {:ex_doc, "~> 0.29", only: ~w[dev test]a},
+      {:ex_doc, "~> 0.30", only: ~w[dev test]a},
       {:git_ops, "~> 2.4", only: ~w[dev test]a, runtime: false}
     ]
   end
