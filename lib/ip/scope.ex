@@ -1,4 +1,6 @@
 defmodule IP.Scope do
+  alias IP.{Address, Prefix}
+  require IP.Prefix
   import IP.Prefix.Helpers
 
   alias IP.{Address, Prefix}
