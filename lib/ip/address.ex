@@ -290,6 +290,42 @@ defmodule IP.Address do
   end
 
   @doc """
+  Convert an `address` into an Erlang-style tuple.
+
+  ## Examples
+
+      iex> ~i(192.0.2.1)
+      ...> |> IP.Address.to_tuple()
+      {192, 0, 2, 1}
+
+      iex> ~i(2001:db8::1)
+      ...> |> IP.Address.to_tuple()
+      {8193, 3512, 0, 0, 0, 0, 0, 1}
+  """
+  @spec to_tuple(t) :: :socket.in_addr() | :socket.in6_addr()
+  def to_tuple(%Address{version: 4, address: addr}) do
+    a = addr >>> 0x18 &&& 0xFF
+    b = addr >>> 0x10 &&& 0xFF
+    c = addr >>> 0x08 &&& 0xFF
+    d = addr &&& 0xFF
+
+    {a, b, c, d}
+  end
+
+  def to_tuple(%Address{version: 6, address: addr}) do
+    a = addr >>> 0x70 &&& 0xFFFF
+    b = addr >>> 0x60 &&& 0xFFFF
+    c = addr >>> 0x50 &&& 0xFFFF
+    d = addr >>> 0x40 &&& 0xFFFF
+    e = addr >>> 0x30 &&& 0xFFFF
+    f = addr >>> 0x20 &&& 0xFFFF
+    g = addr >>> 0x10 &&& 0xFFFF
+    h = addr &&& 0xFFFF
+
+    {a, b, c, d, e, f, g, h}
+  end
+
+  @doc """
   Convert an `address` into a string.
 
   ## Examples
@@ -303,28 +339,9 @@ defmodule IP.Address do
       "2001:db8::1"
   """
   @spec to_string(t) :: binary
-  def to_string(%Address{version: 4, address: addr}) do
-    a = addr >>> 0x18 &&& 0xFF
-    b = addr >>> 0x10 &&& 0xFF
-    c = addr >>> 0x08 &&& 0xFF
-    d = addr &&& 0xFF
-
-    {a, b, c, d}
-    |> :inet.ntoa()
-    |> List.to_string()
-  end
-
-  def to_string(%Address{version: 6, address: addr}) do
-    a = addr >>> 0x70 &&& 0xFFFF
-    b = addr >>> 0x60 &&& 0xFFFF
-    c = addr >>> 0x50 &&& 0xFFFF
-    d = addr >>> 0x40 &&& 0xFFFF
-    e = addr >>> 0x30 &&& 0xFFFF
-    f = addr >>> 0x20 &&& 0xFFFF
-    g = addr >>> 0x10 &&& 0xFFFF
-    h = addr &&& 0xFFFF
-
-    {a, b, c, d, e, f, g, h}
+  def to_string(address) do
+    address
+    |> to_tuple()
     |> :inet.ntoa()
     |> List.to_string()
   end
