@@ -5,6 +5,15 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## [v2.0.1](https://gitlab.com/jimsy/ip/compare/v2.0.0...v2.0.1) (2023-10-03)
+
+
+
+
+### Improvements:
+
+* Add `IP.Address.to_tuple/1`.
+
 ## [v2.0.0](https://gitlab.com/jimsy/ip/compare/v1.2.3...v2.0.0) (2023-01-16)
 ### Breaking Changes:
 
