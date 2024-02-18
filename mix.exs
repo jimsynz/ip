@@ -42,7 +42,7 @@ defmodule IP.Mixfile do
       {:dialyxir, "~> 1.4", only: ~w[dev test]a, runtime: false},
       {:doctor, "~> 0.21", only: ~w[dev test]a, runtime: false},
       {:ex_check, "~> 0.15.0", only: ~w[dev test]a, runtime: false},
-      {:ex_doc, "~> 0.30", only: ~w[dev test]a, runtime: false},
+      {:ex_doc, "~> 0.31", only: ~w[dev test]a, runtime: false},
       {:earmark, "~> 1.4", only: ~w[dev test]a, runtime: false},
       {:git_ops, "~> 2.4", only: ~w[dev test]a, runtime: false}
     ]
