@@ -5,59 +5,40 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
-## [v2.0.1](https://gitlab.com/jimsy/ip/compare/v2.0.0...v2.0.1) (2023-10-03)
-
-
-
+## [v2.0.1](https://harton.dev/james/ip/compare/v2.0.0...v2.0.1) (2023-10-03)
 
 ### Improvements:
 
-* Add `IP.Address.to_tuple/1`.
+- Add `IP.Address.to_tuple/1`.
 
-## [v2.0.0](https://gitlab.com/jimsy/ip/compare/v1.2.3...v2.0.0) (2023-01-16)
+## [v2.0.0](https://harton.dev/james/ip/compare/v1.2.3...v2.0.0) (2023-01-16)
+
 ### Breaking Changes:
 
-* Relicense to HL3-FULL.
+- Relicense to HL3-FULL.
 
-
-
-## [v1.2.3](https://gitlab.com/jimsy/ip/compare/v1.2.2...v1.2.3) (2022-10-03)
-
-
-
+## [v1.2.3](https://harton.dev/james/ip/compare/v1.2.2...v1.2.3) (2022-10-03)
 
 ### Improvements:
 
-* Add :crypto to extra_applications
+- Add :crypto to extra_applications
 
-## [v1.2.2](https://gitlab.com/jimsy/ip/compare/v1.2.1...v1.2.2) (2022-09-27)
-
-
-
+## [v1.2.2](https://harton.dev/james/ip/compare/v1.2.1...v1.2.2) (2022-09-27)
 
 ### Improvements:
 
-* Update Bitwise use, libs
+- Update Bitwise use, libs
 
-## [v1.2.1](https://gitlab.com/jimsy/ip/compare/v1.2.0...v1.2.1) (2022-09-22)
-
-
-
+## [v1.2.1](https://harton.dev/james/ip/compare/v1.2.0...v1.2.1) (2022-09-22)
 
 ### Bug Fixes:
 
-* correctly validate IPv4 netmasks
+- correctly validate IPv4 netmasks
 
-## [v1.2.0](https://gitlab.com/jimsy/ip/compare/v1.1.1...v1.2.0) (2022-03-01)
-
-
-
+## [v1.2.0](https://harton.dev/james/ip/compare/v1.1.1...v1.2.0) (2022-03-01)
 
 ### Features:
 
-* add `Address.from_tuple/1` and `Address.from_tuple!/1`
+- add `Address.from_tuple/1` and `Address.from_tuple!/1`
 
-## [v1.1.1](https://gitlab.com/jimsy/ip/compare/v1.1.1...v1.1.1) (2021-12-08)
-
-
-
+## [v1.1.1](https://harton.dev/james/ip/compare/v1.1.1...v1.1.1) (2021-12-08)

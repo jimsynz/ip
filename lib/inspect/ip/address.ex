@@ -17,7 +17,7 @@ defimpl Inspect, for: IP.Address do
       iex> ~i(2001:db8::1)
       #IP.Address<2001:db8::1 DOCUMENTATION>
   """
-  @spec inspect(Address.t(), list) :: binary
+  @spec inspect(Address.t(), Inspect.Opts.t()) :: Inspect.Algebra.t()
   def inspect(address, _opts) do
     scope = Scope.address_scope(address)
     concat(["#IP.Address<#{address} #{scope}>"])

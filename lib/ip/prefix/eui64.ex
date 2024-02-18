@@ -34,13 +34,13 @@ defmodule IP.Prefix.EUI64 do
     {:ok, head, tail}
   end
 
-  def generate_eui(head, tail) do
+  defp generate_eui(head, tail) do
     address = (head <<< 40) + (0xFFFE <<< 24) + tail
     address = Bitwise.bxor(address, 0x0200000000000000)
     {:ok, address}
   end
 
-  def hex_to_int(mac) do
+  defp hex_to_int(mac) do
     {:ok, String.to_integer(mac, 16)}
   rescue
     ArgumentError -> {:error, "Unable to parse MAC address"}

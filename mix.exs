@@ -23,7 +23,7 @@ defmodule IP.Mixfile do
       maintainers: ["James Harton <james@harton.nz>"],
       licenses: ["HL3-FULL"],
       links: %{
-        "Source" => "https://gitlab.com/jimsy/ip"
+        "Source" => "https://harton.dev/james/ip"
       }
     ]
   end
@@ -39,8 +39,11 @@ defmodule IP.Mixfile do
   defp deps do
     [
       {:credo, "~> 1.6", only: ~w[dev test]a, runtime: false},
-      {:earmark, "~> 1.4", only: ~w[dev test]a},
-      {:ex_doc, "~> 0.30", only: ~w[dev test]a},
+      {:dialyxir, "~> 1.4", only: ~w[dev test]a, runtime: false},
+      {:doctor, "~> 0.21", only: ~w[dev test]a, runtime: false},
+      {:ex_check, "~> 0.15.0", only: ~w[dev test]a, runtime: false},
+      {:ex_doc, "~> 0.30", only: ~w[dev test]a, runtime: false},
+      {:earmark, "~> 1.4", only: ~w[dev test]a, runtime: false},
       {:git_ops, "~> 2.4", only: ~w[dev test]a, runtime: false}
     ]
   end
