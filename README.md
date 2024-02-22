@@ -8,8 +8,8 @@ IP, IP, Ooray! Simple IP Address representations.
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `ip` to your list of dependencies in `mix.exs`:
+IP is available on [Hex](https://hex.pm/packages/ip) the package can be
+installed by adding `ip` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
@@ -18,6 +18,12 @@ def deps do
   ]
 end
 ```
+
+## Documentation
+
+Documentation for the latest release is available on
+[Hexdocs](https://hexdocs.pm/ip) and for the `main` branch on
+[docs.harton.nz](https://docs.harton.nz/james/ip).
 
 ## Usage
 
