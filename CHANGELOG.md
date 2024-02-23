@@ -5,6 +5,11 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## [v2.0.2](https://harton.dev/james/ip/compare/v2.0.1...v2.0.2) (2024-02-23)
+
+
+
+
 ## [v2.0.1](https://harton.dev/james/ip/compare/v2.0.0...v2.0.1) (2023-10-03)
 
 ### Improvements:

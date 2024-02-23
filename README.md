@@ -14,7 +14,7 @@ installed by adding `ip` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:ip, "~> 2.0.1"}
+    {:ip, "~> 2.0.2"}
   ]
 end
 ```
