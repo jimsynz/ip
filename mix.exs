@@ -14,7 +14,11 @@ defmodule IP.Mixfile do
       start_permanent: Mix.env() == :prod,
       package: package(),
       deps: deps(),
-      description: @description
+      description: @description,
+      docs: [
+        main: "readme",
+        extras: ["README.md", "CHANGELOG.md"]
+      ]
     ]
   end
 
@@ -23,7 +27,10 @@ defmodule IP.Mixfile do
       maintainers: ["James Harton <james@harton.nz>"],
       licenses: ["HL3-FULL"],
       links: %{
-        "Source" => "https://harton.dev/james/ip"
+        "Source" => "https://harton.dev/james/ip",
+        "GitHub" => "https://github.com/jimsynz/ip",
+        "Changelog" => "https://docs.harton.nz/james/ip/changelog.html",
+        "Sponsor" => "https://github.com/sponsors/jimsynz"
       }
     ]
   end
