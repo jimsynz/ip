@@ -43,7 +43,7 @@ Documentation for the latest release is available on
 ## Github Mirror
 
 This repository is mirrored [on Github](https://github.com/jimsynz/ip)
-from it's primary location [on my Forejo instance](https://harton.dev/james/ip).
+from it's primary location [on my Forgejo instance](https://harton.dev/james/ip).
 Feel free to raise issues and open PRs on Github.
 
 ## License
