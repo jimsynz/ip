@@ -5,6 +5,15 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## [v2.0.3](https://harton.dev/james/ip/compare/v2.0.2...v2.0.3) (2024-03-14)
+
+
+
+
+### Improvements:
+
+* use types from `:inet` rather than `:socket`.
+
 ## [v2.0.2](https://harton.dev/james/ip/compare/v2.0.1...v2.0.2) (2024-02-23)
 
 
