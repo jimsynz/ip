@@ -256,7 +256,7 @@ defmodule IP.Address do
       ...> |> IP.Address.from_tuple()
       {:ok, %IP.Address{address: 42540766411282592856903984951653826561, version: 6}}
   """
-  @spec from_tuple(:socket.in_addr() | :socket.in6_addr()) :: {:ok, t} | {:error, term}
+  @spec from_tuple(:inet.ip_address()) :: {:ok, t} | {:error, term}
   def from_tuple({a, b, c, d})
       when valid_byte?(a) and valid_byte?(b) and valid_byte?(c) and valid_byte?(d),
       do: {:ok, %Address{version: 4, address: from_bytes([a, b, c, d])}}
@@ -281,7 +281,7 @@ defmodule IP.Address do
       ...> |> IP.Address.from_tuple!()
       %IP.Address{address: 42540766411282592856903984951653826561, version: 6}
   """
-  @spec from_tuple!(:socket.in_addr() | :socket.in6_addr()) :: t | no_return
+  @spec from_tuple!(:inet.ip_address()) :: t | no_return
   def from_tuple!(tuple) do
     case from_tuple(tuple) do
       {:ok, address} -> address
@@ -302,7 +302,7 @@ defmodule IP.Address do
       ...> |> IP.Address.to_tuple()
       {8193, 3512, 0, 0, 0, 0, 0, 1}
   """
-  @spec to_tuple(t) :: :socket.in_addr() | :socket.in6_addr()
+  @spec to_tuple(t) :: :inet.ip_address()
   def to_tuple(%Address{version: 4, address: addr}) do
     a = addr >>> 0x18 &&& 0xFF
     b = addr >>> 0x10 &&& 0xFF
