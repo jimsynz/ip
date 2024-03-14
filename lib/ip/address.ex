@@ -1,4 +1,6 @@
 defmodule IP.Address do
+  # credo:disable-for-this-file Credo.Check.Readability.PredicateFunctionNames
+
   alias IP.Address
   alias IP.Address.{Helpers, InvalidAddress, ULA}
   alias IP.Prefix
