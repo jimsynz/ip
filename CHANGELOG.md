@@ -5,6 +5,15 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## [v2.1.0](https://harton.dev/james/ip/compare/v2.0.3...v2.1.0) (2025-03-07)
+
+
+
+
+### Features:
+
+* Use IANA's registrys directly for address scopes. (#92)
+
 ## [v2.0.3](https://harton.dev/james/ip/compare/v2.0.2...v2.0.3) (2024-03-14)
 
 
