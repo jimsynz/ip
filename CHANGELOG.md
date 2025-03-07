@@ -5,6 +5,15 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## [v2.1.1](https://harton.dev/james/ip/compare/v2.1.0...v2.1.1) (2025-03-07)
+
+
+
+
+### Improvements:
+
+* widen type constraints on `from_string` parsing. (#93)
+
 ## [v2.1.0](https://harton.dev/james/ip/compare/v2.0.3...v2.1.0) (2025-03-07)
 
 
