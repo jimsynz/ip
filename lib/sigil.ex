@@ -40,31 +40,31 @@ defmodule IP.Sigil do
 
   ## Examples
 
-      iex> IP.Sigil.sigil_i("192.0.2.1", '')
+      iex> IP.Sigil.sigil_i("192.0.2.1", ~c"")
       #IP.Address<192.0.2.1 Documentation (TEST-NET-1), GLOBAL, RESERVED>
 
-      iex> IP.Sigil.sigil_i("192.0.2.0/24", '')
+      iex> IP.Sigil.sigil_i("192.0.2.0/24", ~c"")
       #IP.Prefix<192.0.2.0/24 Documentation (TEST-NET-1), GLOBAL, RESERVED>
 
-      iex> IP.Sigil.sigil_i("2001:db8::/32", '')
+      iex> IP.Sigil.sigil_i("2001:db8::/32", ~c"")
       #IP.Prefix<2001:db8::/32 Documentation, GLOBAL, RESERVED>
 
-      iex> IP.Sigil.sigil_i("2001:db8::", '')
+      iex> IP.Sigil.sigil_i("2001:db8::", ~c"")
       #IP.Address<2001:db8:: Documentation, GLOBAL, RESERVED>
 
-      iex> IP.Sigil.sigil_i("Marty McFly", '')
+      iex> IP.Sigil.sigil_i("Marty McFly", ~c"")
       ** (IP.Sigil.InvalidValue) Unable to parse "Marty McFly" as an IP address or prefix.
 
-      iex> IP.Sigil.sigil_i("192.0.2.1", 'f')
+      iex> IP.Sigil.sigil_i("192.0.2.1", ~c"f")
       #IP.Address<192.0.2.1 Documentation (TEST-NET-1), GLOBAL, RESERVED>
 
-      iex> IP.Sigil.sigil_i("2001:db8::/32", 'f')
+      iex> IP.Sigil.sigil_i("2001:db8::/32", ~c"f")
       ** (IP.Sigil.InvalidValue) Unable to parse "2001:db8::/32" as an IPv4 address or prefix.
 
-      iex> IP.Sigil.sigil_i("192.0.2.1", 's')
+      iex> IP.Sigil.sigil_i("192.0.2.1", ~c"s")
       ** (IP.Sigil.InvalidValue) Unable to parse "192.0.2.1" as an IPv6 address or prefix.
 
-      iex> IP.Sigil.sigil_i("2001:db8::/32", 's')
+      iex> IP.Sigil.sigil_i("2001:db8::/32", ~c"s")
       #IP.Prefix<2001:db8::/32 Documentation, GLOBAL, RESERVED>
   """
   @spec sigil_i(binary, [non_neg_integer]) :: Prefix.t() | Address.t()

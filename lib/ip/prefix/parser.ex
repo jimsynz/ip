@@ -23,7 +23,7 @@ defmodule IP.Prefix.Parser do
       ...> |> inspect()
       "{:ok, #IP.Prefix<2001:db8::/64 Documentation, GLOBAL, RESERVED>}"
   """
-  @spec parse(binary) :: {:ok, Prefix.t()} | {:error, term}
+  @spec parse(any) :: {:ok, Prefix.t()} | {:error, term}
   def parse(prefix) do
     case parse(prefix, 4) do
       {:ok, prefix} ->
@@ -52,8 +52,8 @@ defmodule IP.Prefix.Parser do
       ...> |> inspect()
       "{:ok, #IP.Prefix<2001:db8::/64 Documentation, GLOBAL, RESERVED>}"
   """
-  @spec parse(binary, Address.version()) :: {:ok, Prefix.t()} | {:error, term}
-  def parse(prefix, 4 = _version) do
+  @spec parse(any, Address.version()) :: {:ok, Prefix.t()} | {:error, term}
+  def parse(prefix, 4 = _version) when is_binary(prefix) do
     with {:ok, address, mask} <- ensure_contains_slash(prefix),
          {:ok, address} <- Address.from_string(address, 4),
          {:ok, mask} <- parse_v4_mask(mask) do
@@ -63,7 +63,7 @@ defmodule IP.Prefix.Parser do
     end
   end
 
-  def parse(prefix, 6 = _version) do
+  def parse(prefix, 6 = _version) when is_binary(prefix) do
     with {:ok, address, mask} <- ensure_contains_slash(prefix),
          {:ok, address} <- Address.from_string(address, 6),
          {:ok, mask} <- parse_v6_mask(mask) do
@@ -72,6 +72,10 @@ defmodule IP.Prefix.Parser do
       _ -> {:error, "Error parsing IPv6 prefix"}
     end
   end
+
+  def parse(_prefix, 4), do: {:error, "Error parsing IPv4 prefix"}
+  def parse(_prefix, 6), do: {:error, "Error parsing IPv6 prefix"}
+  def parse(_prefix, version), do: {:error, "No such IP version #{inspect(version)}"}
 
   defp ensure_contains_slash(prefix) do
     case String.split(prefix, "/") do

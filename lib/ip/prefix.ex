@@ -68,7 +68,7 @@ defmodule IP.Prefix do
       ...> |> inspect()
       "{:ok, #IP.Prefix<2001:db8::/64 Documentation, GLOBAL, RESERVED>}"
   """
-  @spec from_string(binary) :: {:ok, t} | {:error, term}
+  @spec from_string(any) :: {:ok, t} | {:error, term}
   def from_string(prefix), do: Parser.parse(prefix)
 
   @doc """
@@ -90,7 +90,7 @@ defmodule IP.Prefix do
       ...> |> IP.Prefix.from_string(4)
       {:error, "Error parsing IPv4 prefix"}
   """
-  @spec from_string(binary, Address.version()) :: {:ok, t} | {:error, term}
+  @spec from_string(any, Address.version()) :: {:ok, t} | {:error, term}
   def from_string(prefix, version), do: Parser.parse(prefix, version)
 
   @doc """
@@ -112,7 +112,7 @@ defmodule IP.Prefix do
       ...> |> IP.Prefix.from_string!()
       #IP.Prefix<2001:db8::/64 Documentation, GLOBAL, RESERVED>
   """
-  @spec from_string!(binary) :: t
+  @spec from_string!(any) :: t
   def from_string!(prefix) do
     case from_string(prefix) do
       {:ok, prefix} -> prefix
@@ -133,7 +133,7 @@ defmodule IP.Prefix do
       ...> |> IP.Prefix.from_string!(4)
       #IP.Prefix<192.0.2.0/24 Documentation (TEST-NET-1), GLOBAL, RESERVED>
   """
-  @spec from_string!(binary, Address.version()) :: t
+  @spec from_string!(any, Address.version()) :: t
   def from_string!(prefix, version) do
     case from_string(prefix, version) do
       {:ok, prefix} -> prefix

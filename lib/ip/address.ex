@@ -139,7 +139,7 @@ defmodule IP.Address do
       ...> |> IP.Address.from_string()
       {:ok, %IP.Address{address: 42540766411282592856903984951653826561, version: 6}}
   """
-  @spec from_string(binary) :: {:ok, t} | {:error, term}
+  @spec from_string(any) :: {:ok, t} | {:error, term}
   def from_string(address) when is_binary(address) do
     case from_string(address, 6) do
       {:ok, address} ->
@@ -152,6 +152,8 @@ defmodule IP.Address do
         end
     end
   end
+
+  def from_string(_), do: {:error, "Unable to parse IP address"}
 
   @doc """
   Convert a string representation into an IP address or raise an
@@ -167,8 +169,8 @@ defmodule IP.Address do
       ...> |> IP.Address.from_string!()
       %IP.Address{address: 42540766411282592856903984951653826561, version: 6}
   """
-  @spec from_string!(binary) :: t
-  def from_string!(address) when is_binary(address) do
+  @spec from_string!(any) :: t
+  def from_string!(address) do
     case from_string(address) do
       {:ok, addr} -> addr
       {:error, msg} -> raise(InvalidAddress, message: msg)
@@ -188,7 +190,7 @@ defmodule IP.Address do
       ...> |> IP.Address.from_string(6)
       {:ok, %IP.Address{address: 42540766411282592856903984951653826561, version: 6}}
   """
-  @spec from_string(binary, version) :: {:ok, t} | {:error, term}
+  @spec from_string(any, version) :: {:ok, t} | {:error, term}
   def from_string(address, 4) when is_binary(address) do
     case :inet.parse_ipv4strict_address(String.to_charlist(address)) do
       {:ok, addr} ->
@@ -237,7 +239,7 @@ defmodule IP.Address do
       ...> |> IP.Address.from_string!(6)
       %IP.Address{address: 42540766411282592856903984951653826561, version: 6}
   """
-  @spec from_string!(binary, version) :: t
+  @spec from_string!(any, version) :: t
   def from_string!(address, version) do
     case from_string(address, version) do
       {:ok, address} -> address
