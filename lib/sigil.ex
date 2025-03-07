@@ -16,16 +16,16 @@ defmodule IP.Sigil do
   ## Examples
 
       iex> ~i(192.0.2.1/32)
-      #IP.Prefix<192.0.2.1/32 DOCUMENTATION>
+      #IP.Prefix<192.0.2.1/32 Documentation (TEST-NET-1), GLOBAL, RESERVED>
 
       iex> ~i(192.0.2.1)f
-      #IP.Address<192.0.2.1 DOCUMENTATION>
+      #IP.Address<192.0.2.1 Documentation (TEST-NET-1), GLOBAL, RESERVED>
 
       iex> ~i(2001:db8::/32)
-      #IP.Prefix<2001:db8::/32 DOCUMENTATION>
+      #IP.Prefix<2001:db8::/32 Documentation, GLOBAL, RESERVED>
 
       iex> ~i(2001:db8::/32)s
-      #IP.Prefix<2001:db8::/32 DOCUMENTATION>
+      #IP.Prefix<2001:db8::/32 Documentation, GLOBAL, RESERVED>
   """
 
   @doc """
@@ -41,22 +41,22 @@ defmodule IP.Sigil do
   ## Examples
 
       iex> IP.Sigil.sigil_i("192.0.2.1", '')
-      #IP.Address<192.0.2.1 DOCUMENTATION>
+      #IP.Address<192.0.2.1 Documentation (TEST-NET-1), GLOBAL, RESERVED>
 
       iex> IP.Sigil.sigil_i("192.0.2.0/24", '')
-      #IP.Prefix<192.0.2.0/24 DOCUMENTATION>
+      #IP.Prefix<192.0.2.0/24 Documentation (TEST-NET-1), GLOBAL, RESERVED>
 
       iex> IP.Sigil.sigil_i("2001:db8::/32", '')
-      #IP.Prefix<2001:db8::/32 DOCUMENTATION>
+      #IP.Prefix<2001:db8::/32 Documentation, GLOBAL, RESERVED>
 
       iex> IP.Sigil.sigil_i("2001:db8::", '')
-      #IP.Address<2001:db8:: DOCUMENTATION>
+      #IP.Address<2001:db8:: Documentation, GLOBAL, RESERVED>
 
       iex> IP.Sigil.sigil_i("Marty McFly", '')
       ** (IP.Sigil.InvalidValue) Unable to parse "Marty McFly" as an IP address or prefix.
 
       iex> IP.Sigil.sigil_i("192.0.2.1", 'f')
-      #IP.Address<192.0.2.1 DOCUMENTATION>
+      #IP.Address<192.0.2.1 Documentation (TEST-NET-1), GLOBAL, RESERVED>
 
       iex> IP.Sigil.sigil_i("2001:db8::/32", 'f')
       ** (IP.Sigil.InvalidValue) Unable to parse "2001:db8::/32" as an IPv4 address or prefix.
@@ -65,7 +65,7 @@ defmodule IP.Sigil do
       ** (IP.Sigil.InvalidValue) Unable to parse "192.0.2.1" as an IPv6 address or prefix.
 
       iex> IP.Sigil.sigil_i("2001:db8::/32", 's')
-      #IP.Prefix<2001:db8::/32 DOCUMENTATION>
+      #IP.Prefix<2001:db8::/32 Documentation, GLOBAL, RESERVED>
   """
   @spec sigil_i(binary, [non_neg_integer]) :: Prefix.t() | Address.t()
   def sigil_i(value, ~c"" = _options) do

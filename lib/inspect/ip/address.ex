@@ -7,15 +7,15 @@ defimpl Inspect, for: IP.Address do
   """
 
   @doc """
-  Inpect an `address`.
+  Inspect an `address`.
 
   ## Examples
 
       iex> ~i(192.0.2.1)
-      #IP.Address<192.0.2.1 DOCUMENTATION>
+      #IP.Address<192.0.2.1 Documentation (TEST-NET-1), GLOBAL, RESERVED>
 
       iex> ~i(2001:db8::1)
-      #IP.Address<2001:db8::1 DOCUMENTATION>
+      #IP.Address<2001:db8::1 Documentation, GLOBAL, RESERVED>
   """
   @spec inspect(Address.t(), Inspect.Opts.t()) :: Inspect.Algebra.t()
   def inspect(address, _opts) do

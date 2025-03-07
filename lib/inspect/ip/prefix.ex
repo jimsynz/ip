@@ -13,7 +13,7 @@ defimpl Inspect, for: IP.Prefix do
 
       iex> ~i(192.0.2.1)
       ...> |> IP.Address.to_prefix(32)
-      #IP.Prefix<192.0.2.1/32 DOCUMENTATION>
+      #IP.Prefix<192.0.2.1/32 Documentation (TEST-NET-1), GLOBAL, RESERVED>
   """
   @spec inspect(Prefix.t(), Inspect.Opts.t()) :: Inspect.Algebra.t()
   def inspect(%Prefix{} = prefix, _opts) do

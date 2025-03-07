@@ -2,7 +2,7 @@ defmodule IP.Mixfile do
   use Mix.Project
 
   @description """
-  Represtations and tools for IP addresses and networks.
+  Tools for working with IP addresses and networks.
   """
   @version "2.0.3"
 
@@ -13,6 +13,9 @@ defmodule IP.Mixfile do
       elixir: "~> 1.5",
       start_permanent: Mix.env() == :prod,
       package: package(),
+      dialyzer: [
+        plt_add_apps: [:mix, :req, :saxy]
+      ],
       deps: deps(),
       description: @description,
       docs: [
@@ -45,13 +48,15 @@ defmodule IP.Mixfile do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:credo, "~> 1.6", only: ~w[dev test]a, runtime: false},
-      {:dialyxir, "~> 1.4", only: ~w[dev test]a, runtime: false},
-      {:doctor, "~> 0.22", only: ~w[dev test]a, runtime: false},
-      {:ex_check, "~> 0.16.0", only: ~w[dev test]a, runtime: false},
-      {:ex_doc, "~> 0.37", only: ~w[dev test]a, runtime: false},
-      {:earmark, "~> 1.4", only: ~w[dev test]a, runtime: false},
-      {:git_ops, "~> 2.4", only: ~w[dev test]a, runtime: false}
+      {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
+      {:doctor, "~> 0.22", only: [:dev, :test], runtime: false},
+      {:ex_check, "~> 0.16", only: [:dev, :test], runtime: false},
+      {:ex_doc, "~> 0.37", only: [:dev, :test], runtime: false},
+      {:earmark, "~> 1.4", only: [:dev, :test], runtime: false},
+      {:git_ops, "~> 2.4", only: [:dev, :test], runtime: false},
+      {:req, "~> 0.5", only: [:dev, :test], runtime: false},
+      {:saxy, "~> 1.6", only: [:dev, :test], runtime: false}
     ]
   end
 end

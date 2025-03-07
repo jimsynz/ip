@@ -355,7 +355,7 @@ defmodule IP.Address do
 
       iex> ~i(192.0.2.1)
       ...> |> IP.Address.to_prefix(32)
-      #IP.Prefix<192.0.2.1/32 DOCUMENTATION>
+      #IP.Prefix<192.0.2.1/32 Documentation (TEST-NET-1), GLOBAL, RESERVED>
   """
   @spec to_prefix(t, Prefix.prefix_length()) :: Prefix.t()
   def to_prefix(%Address{} = address, length), do: Prefix.new(address, length)
@@ -477,7 +477,7 @@ defmodule IP.Address do
 
       iex> ~i(192.0.2.1)
       ...> |> IP.Address.to_6to4()
-      #IP.Address<2002:c000:201:: GLOBAL UNICAST (6to4)>
+      #IP.Address<2002:c000:201:: 6to4, GLOBAL, RESERVED>
   """
   @spec to_6to4(t) :: {:ok, t} | {:error, term}
   def to_6to4(%Address{address: address, version: 4}) do
@@ -515,7 +515,7 @@ defmodule IP.Address do
       iex> ~i(2002:c000:201::)
       ...> |> IP.Address.from_6to4()
       ...> |> inspect()
-      "{:ok, #IP.Address<192.0.2.1 DOCUMENTATION>}"
+      "{:ok, #IP.Address<192.0.2.1 Documentation (TEST-NET-1), GLOBAL, RESERVED>}"
 
       iex> ~i(2001:db8::)
       ...> |> IP.Address.from_6to4()

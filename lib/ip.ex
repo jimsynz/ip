@@ -9,10 +9,10 @@ defmodule IP do
   ## Examples
 
       iex> ~i(192.0.2.1)
-      #IP.Address<192.0.2.1 DOCUMENTATION>
+      #IP.Address<192.0.2.1 Documentation (TEST-NET-1), GLOBAL, RESERVED>
 
       iex> ~i(2001:db8::)
-      #IP.Address<2001:db8:: DOCUMENTATION>
+      #IP.Address<2001:db8:: Documentation, GLOBAL, RESERVED>
 
       iex> outside = ~i(2001:db8::/64)
       ...> inside  = IP.Prefix.eui_64!(outside, "60:f8:1d:ad:d8:90")

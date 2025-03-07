@@ -30,10 +30,10 @@ defmodule IP.Prefix do
   ## Examples
 
       iex> IP.Prefix.new(~i(192.0.2.1), 24)
-      #IP.Prefix<192.0.2.0/24 DOCUMENTATION>
+      #IP.Prefix<192.0.2.0/24 Documentation (TEST-NET-1), GLOBAL, RESERVED>
 
       iex> IP.Prefix.new(~i(2001:db8::1), 64)
-      #IP.Prefix<2001:db8::/64 DOCUMENTATION>
+      #IP.Prefix<2001:db8::/64 Documentation, GLOBAL, RESERVED>
   """
   @spec new(Address.t(), prefix_length) :: t
   def new(%Address{address: address, version: 4}, length) when length >= 0 and length <= 32 do
@@ -56,17 +56,17 @@ defmodule IP.Prefix do
       iex> "192.0.2.1/24"
       ...> |> IP.Prefix.from_string()
       ...> |> inspect()
-      "{:ok, #IP.Prefix<192.0.2.0/24 DOCUMENTATION>}"
+      "{:ok, #IP.Prefix<192.0.2.0/24 Documentation (TEST-NET-1), GLOBAL, RESERVED>}"
 
       iex> "192.0.2.1/255.255.255.0"
       ...> |> IP.Prefix.from_string()
       ...> |> inspect()
-      "{:ok, #IP.Prefix<192.0.2.0/24 DOCUMENTATION>}"
+      "{:ok, #IP.Prefix<192.0.2.0/24 Documentation (TEST-NET-1), GLOBAL, RESERVED>}"
 
       iex> "2001:db8::/64"
       ...> |> IP.Prefix.from_string()
       ...> |> inspect()
-      "{:ok, #IP.Prefix<2001:db8::/64 DOCUMENTATION>}"
+      "{:ok, #IP.Prefix<2001:db8::/64 Documentation, GLOBAL, RESERVED>}"
   """
   @spec from_string(binary) :: {:ok, t} | {:error, term}
   def from_string(prefix), do: Parser.parse(prefix)
@@ -79,12 +79,12 @@ defmodule IP.Prefix do
       iex> "192.0.2.1/24"
       ...> |> IP.Prefix.from_string(4)
       ...> |> inspect()
-      "{:ok, #IP.Prefix<192.0.2.0/24 DOCUMENTATION>}"
+      "{:ok, #IP.Prefix<192.0.2.0/24 Documentation (TEST-NET-1), GLOBAL, RESERVED>}"
 
       iex> "192.0.2.1/255.255.255.0"
       ...> |> IP.Prefix.from_string(4)
       ...> |> inspect()
-      "{:ok, #IP.Prefix<192.0.2.0/24 DOCUMENTATION>}"
+      "{:ok, #IP.Prefix<192.0.2.0/24 Documentation (TEST-NET-1), GLOBAL, RESERVED>}"
 
       iex> "2001:db8::/64"
       ...> |> IP.Prefix.from_string(4)
@@ -102,15 +102,15 @@ defmodule IP.Prefix do
 
       iex> "192.0.2.1/24"
       ...> |> IP.Prefix.from_string!()
-      #IP.Prefix<192.0.2.0/24 DOCUMENTATION>
+      #IP.Prefix<192.0.2.0/24 Documentation (TEST-NET-1), GLOBAL, RESERVED>
 
       iex> "192.0.2.1/255.255.255.0"
       ...> |> IP.Prefix.from_string!()
-      #IP.Prefix<192.0.2.0/24 DOCUMENTATION>
+      #IP.Prefix<192.0.2.0/24 Documentation (TEST-NET-1), GLOBAL, RESERVED>
 
       iex> "2001:db8::/64"
       ...> |> IP.Prefix.from_string!()
-      #IP.Prefix<2001:db8::/64 DOCUMENTATION>
+      #IP.Prefix<2001:db8::/64 Documentation, GLOBAL, RESERVED>
   """
   @spec from_string!(binary) :: t
   def from_string!(prefix) do
@@ -127,11 +127,11 @@ defmodule IP.Prefix do
 
       iex> "192.0.2.1/24"
       ...> |> IP.Prefix.from_string!(4)
-      #IP.Prefix<192.0.2.0/24 DOCUMENTATION>
+      #IP.Prefix<192.0.2.0/24 Documentation (TEST-NET-1), GLOBAL, RESERVED>
 
       iex> "192.0.2.1/255.255.255.0"
       ...> |> IP.Prefix.from_string!(4)
-      #IP.Prefix<192.0.2.0/24 DOCUMENTATION>
+      #IP.Prefix<192.0.2.0/24 Documentation (TEST-NET-1), GLOBAL, RESERVED>
   """
   @spec from_string!(binary, Address.version()) :: t
   def from_string!(prefix, version) do
@@ -160,7 +160,7 @@ defmodule IP.Prefix do
 
       iex> ~i(192.0.2.0/24)
       ...> |> IP.Prefix.length(25)
-      #IP.Prefix<192.0.2.0/25 DOCUMENTATION>
+      #IP.Prefix<192.0.2.0/25 Documentation (TEST-NET-1), GLOBAL, RESERVED>
   """
   @spec length(t, prefix_length) :: t
   def length(%Prefix{address: %Address{version: 4}} = prefix, length)
@@ -192,7 +192,7 @@ defmodule IP.Prefix do
 
       iex> ~i(192.0.2.0/24)
       ...> |> IP.Prefix.subnet_mask()
-      #IP.Address<255.255.255.0 RESERVED>
+      #IP.Address<255.255.255.0 Reserved, GLOBAL, RESERVED>
   """
   @spec subnet_mask(t) :: Address.t()
   def subnet_mask(%Prefix{mask: mask, address: %Address{version: 4}}) do
@@ -207,7 +207,7 @@ defmodule IP.Prefix do
 
       iex> ~i(192.0.2.0/24)
       ...> |> IP.Prefix.wildcard_mask()
-      #IP.Address<0.0.0.255 CURRENT NETWORK>
+      #IP.Address<0.0.0.255 This network, GLOBAL, RESERVED>
   """
   @spec wildcard_mask(t) :: Address.t()
   def wildcard_mask(%Prefix{mask: mask, address: %Address{version: 4}}) do
@@ -224,11 +224,11 @@ defmodule IP.Prefix do
 
       iex> ~i(192.0.2.128/24)
       ...> |> IP.Prefix.first()
-      #IP.Address<192.0.2.0 DOCUMENTATION>
+      #IP.Address<192.0.2.0 Documentation (TEST-NET-1), GLOBAL, RESERVED>
 
       iex> ~i(2001:db8::128/64)
       ...> |> IP.Prefix.first()
-      #IP.Address<2001:db8:: DOCUMENTATION>
+      #IP.Address<2001:db8:: Documentation, GLOBAL, RESERVED>
   """
   @spec first(t) :: Address.t()
   def first(%Prefix{address: %Address{address: address, version: version}, mask: mask}) do
@@ -242,11 +242,11 @@ defmodule IP.Prefix do
 
       iex> ~i(192.0.2.128/24)
       ...> |> IP.Prefix.last()
-      #IP.Address<192.0.2.255 DOCUMENTATION>
+      #IP.Address<192.0.2.255 Documentation (TEST-NET-1), GLOBAL, RESERVED>
 
       iex> ~i(2001:db8::128/64)
       ...> |> IP.Prefix.last()
-      #IP.Address<2001:db8::ffff:ffff:ffff:ffff DOCUMENTATION>
+      #IP.Address<2001:db8::ffff:ffff:ffff:ffff Documentation, GLOBAL, RESERVED>
   """
   @spec last(t) :: Address.t()
   def last(%Prefix{address: %Address{address: address, version: 4}, mask: mask}) do
@@ -362,7 +362,7 @@ defmodule IP.Prefix do
       iex> ~i(2001:db8::/64)
       ...> |> IP.Prefix.eui_64("60:f8:1d:ad:d8:90")
       ...> |> inspect()
-      "{:ok, #IP.Address<2001:db8::62f8:1dff:fead:d890 DOCUMENTATION>}"
+      "{:ok, #IP.Address<2001:db8::62f8:1dff:fead:d890 Documentation, GLOBAL, RESERVED>}"
   """
   @spec eui_64(t, binary) :: {:ok, Address.t()} | {:error, term}
   def eui_64(
@@ -386,7 +386,7 @@ defmodule IP.Prefix do
 
       iex> ~i(2001:db8::/64)
       ...> |> IP.Prefix.eui_64!("60:f8:1d:ad:d8:90")
-      #IP.Address<2001:db8::62f8:1dff:fead:d890 DOCUMENTATION>
+      #IP.Address<2001:db8::62f8:1dff:fead:d890 Documentation, GLOBAL, RESERVED>
   """
   @spec eui_64!(t, binary) :: Address.t()
   def eui_64!(prefix, mac) do
