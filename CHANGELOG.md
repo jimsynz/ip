@@ -5,6 +5,15 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## [v2.1.2](https://harton.dev/james/ip/compare/v2.1.1...v2.1.2) (2025-03-11)
+
+
+
+
+### Bug Fixes:
+
+* conditionally compile the registry parser when saxy is present.
+
 ## [v2.1.1](https://harton.dev/james/ip/compare/v2.1.0...v2.1.1) (2025-03-07)
 
 
