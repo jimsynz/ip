@@ -48,6 +48,7 @@ defmodule IP.Mixfile do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:saxy, "~> 1.6"},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:doctor, "~> 0.22", only: [:dev, :test], runtime: false},
@@ -55,8 +56,7 @@ defmodule IP.Mixfile do
       {:ex_doc, "~> 0.37", only: [:dev, :test], runtime: false},
       {:earmark, "~> 1.4", only: [:dev, :test], runtime: false},
       {:git_ops, "~> 2.4", only: [:dev, :test], runtime: false},
-      {:req, "~> 0.5", only: [:dev, :test], runtime: false},
-      {:saxy, "~> 1.6", only: [:dev, :test], runtime: false}
+      {:req, "~> 0.5", only: [:dev, :test], runtime: false}
     ]
   end
 end
