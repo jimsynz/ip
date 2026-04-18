@@ -1,6 +1,5 @@
 # IP
 
-[![Build Status](https://drone.harton.dev/api/badges/james/ip/status.svg)](https://drone.harton.dev/james/ip)
 [![Hex.pm](https://img.shields.io/hexpm/v/ip.svg)](https://hex.pm/packages/ip)
 [![Hippocratic License HL3-FULL](https://img.shields.io/static/v1?label=Hippocratic%20License&message=HL3-FULL&labelColor=5e2751&color=bc8c3d)](https://firstdonoharm.dev/version/3/0/full.html)
 
@@ -22,8 +21,7 @@ end
 ## Documentation
 
 Documentation for the latest release is available on
-[Hexdocs](https://hexdocs.pm/ip) and for the `main` branch on
-[docs.harton.nz](https://docs.harton.nz/james/ip).
+[Hexdocs](https://hexdocs.pm/ip).
 
 ## Usage
 
