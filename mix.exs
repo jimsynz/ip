@@ -55,7 +55,7 @@ defmodule IP.Mixfile do
       {:ex_check, "~> 0.16", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.40", only: [:dev, :test], runtime: false},
       {:git_ops, "~> 2.4", only: [:dev, :test], runtime: false},
-      {:req, "~> 0.5", only: [:dev, :test], runtime: false}
+      {:req, "~> 0.6", only: [:dev, :test], runtime: false}
     ]
   end
 end
